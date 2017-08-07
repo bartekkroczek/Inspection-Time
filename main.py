@@ -5,7 +5,7 @@ import codecs
 import csv
 import random
 from os.path import join
-from Adaptatives import NUpNDown
+from Adaptives import NUpNDown
 
 from psychopy import visual, core, event, logging
 
