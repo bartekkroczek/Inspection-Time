@@ -92,9 +92,6 @@ def main():
     dictDlg = gui.DlgFromDict(dictionary=info, title='Inspection time Visual Lines', fixed=['ExpDate'])
     if not dictDlg.OK:
         abort_with_error('Info dialog terminated.')
-    #
-    PART_ID = info['Part_id'] + info['Part_sex'] + info['Part_age']
-    logging.LogFile('results/' + PART_ID + '.log', level=logging.INFO)  # errors logging
 
     # === Scene init ===
     win = visual.Window(SCREEN_RES.values(), fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
@@ -107,36 +104,46 @@ def main():
     arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=3 * TEXT_SIZE,
                                   pos=(0, -2.5 * VISUAL_OFFSET))
 
-    config = yaml.load(open('config.yaml'))
-    experiment = NUpNDown()
+    # === Load data, configure log ===
+    PART_ID = info['Part_id'] + info['Part_sex'] + info['Part_age']
+    response_clock = core.Clock()
+    conf = yaml.load(open('config.yaml'))
+    logging.LogFile('results/' + PART_ID + '.log', level=logging.INFO)  # errors logging
+    logging.info('FRAME RATE: {}'.format(FRAME_RATE))
+    logging.info('SCREEN RES: {}'.format(SCREEN_RES.values()))
+
+    # === Training ===
+
+    training = [conf['Training_level_1']] * conf['Training_reps'] + \
+               [conf['Training_level_2']] * conf['Training_reps'] + \
+               [conf['Training_level_3']] * conf['Training_reps'] + \
+               [conf['Training_level_4']] * conf['Training_reps']
 
     show_info(win, join('.', 'messages', 'before_training.txt'))
 
-    training_reps = 6
-    training = [config['Training_level_1']] * training_reps + \
-               [config['Training_level_2']] * training_reps + \
-               [config['Training_level_3']] * training_reps + \
-               [config['Training_level_4']] * training_reps
-    response_clock = core.Clock()
     correct_trials = 0
     for idx, soa in enumerate(training):
-        corr, rt = run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
-        correct_trials += int(corr)
-        RESULTS.append(
-            [PART_ID, idx, 'LINES', 1, int(idx / training_reps) + 1, config['FIXTIME'], config['MTIME'], int(corr), soa,
-             '-', '-', rt])
-    show_info(win, join('.', 'messages', 'feedback.txt'), insert=str(int((float(correct_trials)/len(training))*100)))
+        corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+        correct_trials += corr
+        train_level = int(idx / conf['Training_reps']) + 1
+        RESULTS.append([PART_ID, idx, 'LINES', 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-', rt])
+
+    train_corr = int((float(correct_trials) / len(training)) * 100)
+    show_info(win, join('.', 'messages', 'feedback.txt'), insert=str(train_corr))
+
+    # === Experiment ===
+
+    experiment = NUpNDown()
+
     show_info(win, join('.', 'messages', 'after_training.txt'))
 
     for idx, soa in enumerate(experiment, len(training)):
-        corr, rt = run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
-        level, reversal = experiment.get_jump_status()
-        RESULTS.append(
-            [PART_ID, idx, 'LINES', 0, '-', config['FIXTIME'], config['MTIME'], int(corr), soa, level, int(reversal), rt])
-
+        corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+        level, reversal = map(int, experiment.get_jump_status())
+        RESULTS.append([PART_ID, idx, 'LINES', 0, '-', conf['FIXTIME'], conf['MTIME'], corr, soa, level, reversal, rt])
         experiment.set_corr(corr)
 
-    # clear all mess
+    # === Cleaning time ===
     save_beh_results()
     logging.flush()
     show_info(win, join('.', 'messages', 'end.txt'))
@@ -147,6 +154,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
+    rt = -1.0
     for _ in range(config['FIXTIME']):  # Fixation cross
         fix_stim.draw()
         win.flip()
@@ -171,7 +179,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
             rt = response_clock.getTime()
             break
         check_exit()
-    return corr, rt
+    return int(corr), rt
 
 
 if __name__ == '__main__':
