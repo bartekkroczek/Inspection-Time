@@ -5,24 +5,26 @@ import codecs
 import csv
 import random
 from os.path import join
-from Adaptives import NUpNDown
 
-from psychopy import visual, core, event, logging
+import yaml
+from psychopy import visual, event, logging, gui, core
 
+from Adaptives.NUpNDown import NUpNDown
 from misc.screen_misc import get_screen_res, get_frame_rate
 
 # GLOBALS
 TEXT_SIZE = 30
 VISUAL_OFFSET = 90
-FIGURES_SCALE = 0.5
-HEIGHT_OFFSET = 1.0 * VISUAL_OFFSET
-KEYS = ['lctrl', 'rctrl']
-LABELS = ['Lewa krotsza', 'Prawa krotsza']
-STIM_TIME = 1.1
-BREAK_TIME = [0.5, 0.8, 1]
-TIMEOUT_TIME = 1.0
+KEYS = ['left', 'right']
+
 RESULTS = list()
-RESULTS.append(['NR', 'PART_ID', 'SEX', 'AGE', 'GROUP', 'TRIAL', 'TRIAL_GROUP', 'RT', 'CORR'])
+RESULTS.append(['PART_ID', 'Trial', 'Stimuli', 'Training', 'Training_level', 'FIXTIME', 'MTIME', 'Correct', 'SOA',
+                'Level', 'Reversal', 'Latency'])
+
+
+class CorrectStim(object):  # Correct Stimulus Enumerator
+    LEFT = 1
+    RIGHT = 2
 
 
 @atexit.register
@@ -69,7 +71,7 @@ def show_info(win, file_name, insert=''):
     :return:
     """
     msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color='black', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES['width'])
+    msg = visual.TextStim(win, color='white', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES['width'])
     msg.draw()
     win.flip()
     key = event.waitKeys(keyList=['f7', 'return', 'space', 'left', 'right'] + KEYS)
@@ -84,104 +86,92 @@ def abort_with_error(err):
 
 
 def main():
-    global PART_ID
-    info = {'Part_id': '', 'Part_age': '20', 'Part_sex': ['MALE', "FEMALE"], 'ExpDate': '08.2017',
-            'Group': ['WK', 'WP', 'NK', 'NP']}
-    # dictDlg = gui.DlgFromDict(dictionary=info, title='Szopa LIE', fixed=['ExpDate'])
-    # if not dictDlg.OK:
-    # abort_with_error('Info dialog terminated.')
-    # PART_ID = info['Part_id'] + info['Part_sex'] + info['Part_age']
-    # logging.LogFile('results/' + PART_ID + '.log', level=logging.INFO)
-    win = visual.Window(SCREEN_RES.values(), fullscr=True, monitor='testMonitor', units='pix', screen=0,
-                        color='black')
-    event.Mouse(visible=False, newPos=None, win=win)
+    global PART_ID  # PART_ID is used in case of error on @atexit, that's why it must be global
+    # === Dialog popup ===
+    info = {'Part_id': '', 'Part_age': '20', 'Part_sex': ['MALE', "FEMALE"], 'ExpDate': '09.2017'}
+    dictDlg = gui.DlgFromDict(dictionary=info, title='Inspection time Visual Lines', fixed=['ExpDate'])
+    if not dictDlg.OK:
+        abort_with_error('Info dialog terminated.')
+    #
+    PART_ID = info['Part_id'] + info['Part_sex'] + info['Part_age']
+    logging.LogFile('results/' + PART_ID + '.log', level=logging.INFO)  # errors logging
+
+    # === Scene init ===
+    win = visual.Window(SCREEN_RES.values(), fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
+    event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
     FRAME_RATE = get_frame_rate(win)
-    left = visual.ImageStim(win, image=join('.', 'stims', 'IP_linie_left.bmp'))
-    right = visual.ImageStim(win, image=join('.', 'stims', 'IP_linie_right.bmp'))
-    mask = visual.ImageStim(win, image=join('.', 'stims', 'IP_linie_maska.bmp'))
-    left.draw()
-    win.flip()
-    core.wait(2)
-    exit()
+    left_stim = visual.ImageStim(win, image=join('.', 'stims', 'IP_linie_left.bmp'))
+    right_stim = visual.ImageStim(win, image=join('.', 'stims', 'IP_linie_right.bmp'))
+    mask_stim = visual.ImageStim(win, image=join('.', 'stims', 'IP_linie_maska.bmp'))
+    fix_stim = visual.TextStim(win, text='+', height=3 * TEXT_SIZE, color='white')
+    arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=3 * TEXT_SIZE,
+                                  pos=(0, -2.5 * VISUAL_OFFSET))
 
-    response_clock = core.Clock()
-    left_label = visual.TextStim(win, text=LABELS[0], color='black', height=TEXT_SIZE,
-                                 pos=(-2.5 * VISUAL_OFFSET, -2 * VISUAL_OFFSET))
-    right_label = visual.TextStim(win, text=LABELS[1], color='black', height=TEXT_SIZE,
-                                  pos=(2.5 * VISUAL_OFFSET, -2 * VISUAL_OFFSET))
-
-    problem_number = 0
-    # show_info(win, join('.', 'messages', 'after_training.txt'))
-    no_train_trials = 24
-
+    config = yaml.load(open('config.yaml'))
     experiment = NUpNDown()
 
-    while not experiment.is_finished():
-        trial_soa = experiment.get_next_val()
+    show_info(win, join('.', 'messages', 'before_training.txt'))
 
+    training_reps = 6
+    training = [config['Training_level_1']] * training_reps + \
+               [config['Training_level_2']] * training_reps + \
+               [config['Training_level_3']] * training_reps + \
+               [config['Training_level_4']] * training_reps
+    response_clock = core.Clock()
+    correct_trials = 0
+    for idx, soa in enumerate(training):
+        corr, rt = run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+        correct_trials += int(corr)
+        RESULTS.append(
+            [PART_ID, idx, 'LINES', 1, int(idx / training_reps) + 1, config['FIXTIME'], config['MTIME'], int(corr), soa,
+             '-', '-', rt])
+    show_info(win, join('.', 'messages', 'feedback.txt'), insert=str(int((float(correct_trials)/len(training))*100)))
+    show_info(win, join('.', 'messages', 'after_training.txt'))
 
-    show_training = True
-    for block in [train_stims, exp_stims]:
-        if show_training:
-            show_info(win, join('.', 'messages', 'training.txt'))
-            show_training = False
-        else:
-            show_info(win, join('.', 'messages', 'experiment.txt'))
-        for trial in block:
-            rt = -1
-            corr = -1
-            stim_label.setText(trial)
-            left_label.setAutoDraw(True)
-            right_label.setAutoDraw(True)
-            event.clearEvents()
-            win.callOnFlip(response_clock.reset)
-            for _ in range(int(STIM_TIME * FRAME_RATE)):
-                stim_label.draw()
-                keys = event.getKeys(keyList=KEYS)
-                if keys:
-                    rt = response_clock.getTime()
-                    win.flip()
-                    break
-                check_exit()
-                win.flip()
-            if not keys:
-                too_slow_label.draw()
-                stim_label.draw()
-                check_exit()
-                win.flip()
-                keys = event.waitKeys(keyList=KEYS)
-                rt = response_clock.getTime()
+    for idx, soa in enumerate(experiment, len(training)):
+        corr, rt = run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+        level, reversal = experiment.get_jump_status()
+        RESULTS.append(
+            [PART_ID, idx, 'LINES', 0, '-', config['FIXTIME'], config['MTIME'], int(corr), soa, level, int(reversal), rt])
 
-            if keys[0] == KEYS[0]:  # Tak, rozpoznaje
-                if trial in stims['important']:
-                    corr = 1
-                else:
-                    corr = 0
-            else:
-                if trial in stims['important']:
-                    corr = 0
-                else:
-                    corr = 1
-            left_label.setAutoDraw(False)
-            right_label.setAutoDraw(False)
-            win.flip()
-            core.wait(random.choice(BREAK_TIME))
-            problem_number += 1
-
-            if trial in stims['important']:
-                trial_group = 'important'
-            elif trial in stims['target']:
-                trial_group = 'target'
-            else:
-                trial_group = 'unimportant'
-            RESULTS.append([problem_number, info['Part_id'], info['Part_sex'], info['Part_age'], info['Group'],
-                            ''.join([x for x in trial if ord(x) < 128]), trial_group, rt, corr])  # collect results
+        experiment.set_corr(corr)
 
     # clear all mess
     save_beh_results()
     logging.flush()
     show_info(win, join('.', 'messages', 'end.txt'))
     win.close()
+
+
+def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock):
+    trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
+    stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
+    stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
+    for _ in range(config['FIXTIME']):  # Fixation cross
+        fix_stim.draw()
+        win.flip()
+        check_exit()
+    for _ in range(soa):  # Stimulus presentation
+        stim.draw()
+        win.flip()
+        check_exit()
+    for _ in range(config['MTIME']):  # Mask presentation
+        mask_stim.draw()
+        win.flip()
+        check_exit()
+    corr = False  # Used if timeout
+    win.callOnFlip(response_clock.reset)
+    event.clearEvents()
+    for _ in range(config['RTIME']):  # Time for reaction
+        arrow_label.draw()
+        win.flip()
+        keys = event.getKeys(keyList=KEYS)
+        if keys:
+            corr = True if keys[0] == stim_name else False
+            rt = response_clock.getTime()
+            break
+        check_exit()
+    return corr, rt
 
 
 if __name__ == '__main__':

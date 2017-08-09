@@ -1,0 +1,98 @@
+4.2698 	INFO 	Loaded monitor calibration from ['2017_07_06 14:32']
+5.0862 	EXP 	Created window1 = Window(allowGUI=True, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color='black', colorSpace='named', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x7fb81c923050>, name='window1', pos=[0, 0], screen=0, size=array([1366,  768]), stereo=False, units='pix', useFBO=False, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+5.0869 	EXP 	window1: recordFrameIntervals = False
+5.2512 	EXP 	window1: recordFrameIntervals = True
+5.3067 	WARNING 	t of last frame was 20.68ms (=1/48)
+5.8523 	EXP 	window1: recordFrameIntervals = False
+5.8523 	INFO 	Detected framerate: 60 frames per sec.
+5.8663 	EXP 	Created unnamed ImageStim = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/IP_linie_left.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+5.8800 	EXP 	Created unnamed ImageStim = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/IP_linie_right.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+5.8964 	EXP 	Created unnamed ImageStim = ImageStim(autoLog=True, color=array([ 1.,  1.,  1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/IP_linie_maska.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+6.0025 	EXP 	Created unnamed TextStim = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=90, italic=False, name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'+', units='pix', win=Window(...), wrapWidth=500)
+6.0140 	EXP 	Created unnamed TextStim = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=90, italic=False, name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([   0., -225.]), rgb=array([ 255.,  255.,  255.]), text=u'\u2190       \u2192', units='pix', win=Window(...), wrapWidth=500)
+6.0306 	EXP 	Created unnamed TextStim = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'Trening.', units='pix', win=Window(...), wrapWidth=1366)
+6.4687 	DATA 	Keypress: space
+7.6687 	DATA 	Keypress: left
+9.0187 	DATA 	Keypress: left
+10.6854 	DATA 	Keypress: right
+12.3688 	DATA 	Keypress: left
+14.0682 	DATA 	Keypress: right
+15.7187 	DATA 	Keypress: right
+17.0521 	DATA 	Keypress: right
+18.4858 	DATA 	Keypress: left
+19.8852 	DATA 	Keypress: right
+21.1853 	DATA 	Keypress: right
+22.4689 	DATA 	Keypress: left
+23.7858 	DATA 	Keypress: left
+25.0018 	DATA 	Keypress: left
+26.1687 	DATA 	Keypress: left
+27.2356 	DATA 	Keypress: left
+28.2859 	DATA 	Keypress: right
+29.3193 	DATA 	Keypress: right
+30.3019 	DATA 	Keypress: left
+31.5863 	DATA 	Keypress: left
+32.6033 	DATA 	Keypress: right
+33.6516 	DATA 	Keypress: left
+34.8527 	DATA 	Keypress: left
+35.7699 	DATA 	Keypress: right
+36.9523 	DATA 	Keypress: right
+38.1357 	DATA 	Keypress: left
+39.3694 	DATA 	Keypress: right
+39.3815 	EXP 	Created unnamed TextStim = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'Procent poprawno\u015bci w treningu:\n95', units='pix', win=Window(...), wrapWidth=1366)
+45.3098 	DATA 	Keypress: space
+45.3158 	EXP 	Created unnamed TextStim = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'Po treningu.', units='pix', win=Window(...), wrapWidth=1366)
+46.1065 	DATA 	Keypress: space
+47.0527 	DATA 	Keypress: right
+48.2698 	DATA 	Keypress: left
+49.0032 	DATA 	Keypress: left
+50.8196 	DATA 	Keypress: left
+52.0357 	DATA 	Keypress: right
+53.3359 	DATA 	Keypress: left
+54.4529 	DATA 	Keypress: right
+55.7699 	DATA 	Keypress: right
+57.0867 	DATA 	Keypress: right
+58.2531 	DATA 	Keypress: left
+59.4207 	DATA 	Keypress: left
+60.6860 	DATA 	Keypress: left
+61.9208 	DATA 	Keypress: left
+63.1374 	DATA 	Keypress: left
+64.1709 	DATA 	Keypress: right
+65.2532 	DATA 	Keypress: right
+66.3029 	DATA 	Keypress: right
+67.3693 	DATA 	Keypress: right
+68.5030 	DATA 	Keypress: left
+69.6866 	DATA 	Keypress: left
+70.7367 	DATA 	Keypress: right
+71.6869 	DATA 	Keypress: left
+72.8194 	DATA 	Keypress: right
+73.8030 	DATA 	Keypress: right
+74.8698 	DATA 	Keypress: left
+76.2703 	DATA 	Keypress: left
+77.2040 	DATA 	Keypress: right
+78.2365 	DATA 	Keypress: right
+79.1868 	DATA 	Keypress: left
+80.2202 	DATA 	Keypress: right
+81.3702 	DATA 	Keypress: left
+82.3209 	DATA 	Keypress: right
+83.3363 	DATA 	Keypress: right
+84.4856 	DATA 	Keypress: left
+85.7202 	DATA 	Keypress: left
+86.8374 	DATA 	Keypress: right
+87.8371 	DATA 	Keypress: left
+88.9375 	DATA 	Keypress: right
+89.9866 	DATA 	Keypress: left
+91.2040 	DATA 	Keypress: left
+92.3538 	DATA 	Keypress: left
+93.5373 	DATA 	Keypress: left
+94.9368 	DATA 	Keypress: left
+96.0030 	DATA 	Keypress: right
+97.0036 	DATA 	Keypress: left
+98.1873 	DATA 	Keypress: left
+99.2866 	DATA 	Keypress: left
+100.4868 	DATA 	Keypress: left
+101.8537 	DATA 	Keypress: right
+102.8872 	DATA 	Keypress: left
+104.0532 	DATA 	Keypress: left
+104.0599 	EXP 	Created unnamed TextStim = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'Koniec.', units='pix', win=Window(...), wrapWidth=1366)
+106.6543 	DATA 	Keypress: space
+106.6551 	EXP 	window1: mouseVisible = True

@@ -1,0 +1,2 @@
+Procent poprawności w treningu:
+<--insert-->
