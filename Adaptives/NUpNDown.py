@@ -100,4 +100,4 @@ class NUpNDown(AbstractAdaptive):
             self.no_corr_in_a_row = 0
 
     def get_jump_status(self):
-        return self.last_jump_dir, self.switch_in_last_trail_flag
+        return self.last_jump_dir, self.switch_in_last_trail_flag, self.revs_count
