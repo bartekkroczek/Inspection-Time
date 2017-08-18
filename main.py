@@ -136,10 +136,18 @@ def main():
 
     experiment = NUpNDown(start_val=conf['START_SOA'])
 
+    old_rev_count_val = -1
     for idx, soa in enumerate(experiment, len(training)):
         corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
         level, reversal, revs_count = map(int, experiment.get_jump_status())
-        RESULTS.append([PART_ID, idx, PROC_VER, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal, revs_count, rt])
+        rev_count_val = 0
+        if  old_rev_count_val != revs_count:
+            old_rev_count_val = revs_count
+            rev_count_val = revs_count
+        else:
+            rev_count_val = '-'
+
+        RESULTS.append([PART_ID, idx, PROC_VER, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal, rev_count_val, rt])
         experiment.set_corr(corr)
 
     # === Cleaning time ===
