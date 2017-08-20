@@ -7,5 +7,6 @@ START_SOA: 5
 FIXTIME: 30 # Fixation cross time
 MTIME: 20 # Mask presentation time
 RTIME: 240 # Maximal response time
+MAX_REVS: 8 # No of reversals in adaptive alg.
 STEP_UP: 1
 STEP_DOWN: 1

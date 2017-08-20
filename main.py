@@ -134,7 +134,7 @@ def main():
 
     # === Experiment ===
 
-    experiment = NUpNDown(start_val=conf['START_SOA'])
+    experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
 
     old_rev_count_val = -1
     for idx, soa in enumerate(experiment, len(training)):
