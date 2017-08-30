@@ -88,72 +88,76 @@ def abort_with_error(err):
 def main():
     global PART_ID  # PART_ID is used in case of error on @atexit, that's why it must be global
     # === Dialog popup ===
-    info = {'IDENTYFIKATOR': '', u'P\u0141EC': ['M', "K"], 'WIEK': '20', 'WERSJA': ["Linie", 'Kwadraty']}
+    info = {'IDENTYFIKATOR': '', u'P\u0141EC': ['M', "K"], 'WIEK': '20'}
     dictDlg = gui.DlgFromDict(dictionary=info, title='Czas detekcji wzrokowej')
     if not dictDlg.OK:
         abort_with_error('Info dialog terminated.')
-
-    PROC_VER = 'LINES' if info['WERSJA'] == 'Linie' else 'SQUARES'
 
     # === Scene init ===
     win = visual.Window(SCREEN_RES.values(), fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
     FRAME_RATE = get_frame_rate(win)
-    left_stim = visual.ImageStim(win, image=join('.', 'stims', PROC_VER +'_LEFT.bmp'))
-    right_stim = visual.ImageStim(win, image=join('.', 'stims', PROC_VER + '_RIGHT.bmp'))
-    mask_stim = visual.ImageStim(win, image=join('.', 'stims', PROC_VER + '_MASK.bmp'))
-    fix_stim = visual.TextStim(win, text='+', height=3 * TEXT_SIZE, color='white')
-    arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=3 * TEXT_SIZE,
-                                  pos=(0, -2.5 * VISUAL_OFFSET))
-
-    # === Load data, configure log ===
-    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK'] + PROC_VER
-    response_clock = core.Clock()
-    conf = yaml.load(open(PROC_VER + '_config.yaml'))
+    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
     logging.LogFile('results/' + PART_ID + '.log', level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES.values()))
 
-    # === Training ===
-    training = list()
-    for train_desc in conf['Training']:
-        training.extend([train_desc['soa']] * train_desc['reps'])
+    for proc_version in ['LINES', 'SQUARES', 'CIRCLES']:
+        left_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version +'_LEFT.bmp'))
+        right_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_RIGHT.bmp'))
+        mask_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_MASK.bmp'))
+        fix_stim = visual.TextStim(win, text='+', height=3 * TEXT_SIZE, color='white')
+        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=3 * TEXT_SIZE,
+                                      pos=(0, -2.5 * VISUAL_OFFSET))
 
-    show_info(win, join('.', PROC_VER + '_messages', 'before_training.txt'))
+        # === Load data, configure log ===
 
-    correct_trials = 0
-    for idx, soa in enumerate(training):
-        corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
-        corr = int(corr)
-        correct_trials += corr
-        train_level = int(idx / conf['Training_reps']) + 1
-        RESULTS.append([PART_ID, idx, PROC_VER, 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-', '-', rt])
+        response_clock = core.Clock()
+        conf = yaml.load(open(proc_version + '_config.yaml'))
 
-    train_corr = int((float(correct_trials) / len(training)) * 100)
-    show_info(win, join('.', PROC_VER + '_messages', 'feedback.txt'), insert=str(train_corr))
+        # === Training ===
+        training = list()
+        for train_desc in conf['Training']:
+            training.append([train_desc['soa']] * train_desc['reps'])
 
-    # === Experiment ===
+        show_info(win, join('.', proc_version + '_messages', 'before_training.txt'))
 
-    experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+        correct_trials = 0
+        idx = 0
+        train_level = 0
+        for level in training:
+            train_level += 1
+            for soa in level:
+                idx += 1
+                corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+                corr = int(corr)
+                correct_trials += corr
+                RESULTS.append([PART_ID, idx, proc_version, 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-', '-', rt])
 
-    old_rev_count_val = -1
-    for idx, soa in enumerate(experiment, len(training)):
-        corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
-        level, reversal, revs_count = map(int, experiment.get_jump_status())
-        rev_count_val = 0
-        if  old_rev_count_val != revs_count:
-            old_rev_count_val = revs_count
-            rev_count_val = revs_count
-        else:
-            rev_count_val = '-'
+        train_corr = int((float(correct_trials) / len(training)) * 100)
+        show_info(win, join('.', proc_version + '_messages', 'feedback.txt'), insert=str(train_corr))
 
-        RESULTS.append([PART_ID, idx, PROC_VER, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal, rev_count_val, rt])
-        experiment.set_corr(corr)
+        # === Experiment ===
+
+        experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+
+        old_rev_count_val = -1
+        for idx, soa in enumerate(experiment, idx):
+            corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+            level, reversal, revs_count = map(int, experiment.get_jump_status())
+            if old_rev_count_val != revs_count:
+                old_rev_count_val = revs_count
+                rev_count_val = revs_count
+            else:
+                rev_count_val = '-'
+
+            RESULTS.append([PART_ID, idx, proc_version, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal, rev_count_val, rt])
+            experiment.set_corr(corr)
 
     # === Cleaning time ===
     save_beh_results()
     logging.flush()
-    show_info(win, join('.', PROC_VER + '_messages', 'end.txt'))
+    show_info(win, 'end.txt')
     win.close()
 
 
