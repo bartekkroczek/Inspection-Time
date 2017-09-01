@@ -1,24 +1,14 @@
+Teraz nastąpi kolejne zadanie, które będzie wyglądać analogicznie jak to poprzednie.
+
 W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
-pojawiła się dłuższa linia z dwóch wyświetlonych.
-Na początku linie będą pojawiać się na ekranie na tyle
+pojawił się OBRÓCONY KWADRAT (drugi kwadrat będzie zwyczajnie ustawiony).
+Na początku okręgi będą pojawiać się na ekranie na tyle
 długo, że zadanie to będzie proste.
 W dalszej części zadanie będzie stanie się trudniejsze.
-Linie będą wyświetlane przez coraz krótszy czas tak, że mogą być one ledwo rozpoznawalne,
-pomimo tego staraj się udzielać poprawnych odpowiedzi.
 
-Dokładnie zadanie będzie wyglądać następująco:
-Najpierw na ekranie pojawi się krzyżyk (+) - skup na nim wzrok.
-Po chwili krzyżyk zniknie, a na ekranie pojawią się dwie pionowe linie.
-Zawsze jedna z nich, losowo po lewej lub prawej stronie, będzie dłuższa.
-Następnie linie te zostaną zasłonięte przez maskujący wzór,
-a po zniknięciu tego wzoru nastąpi czas na Twoja odpowiedz.
-Odpowiedzi udzielaj za pomocą strzałek na klawiaturze.
-Naciśnij lewą strzałkę jeśli to po lewej stronie wyświetliła się DŁUŻSZA linia
-lub prawą strzałkę jeśli to po prawej stronie wyświetliła się DŁUŻSZA linia.
+Naciśnij lewą strzałkę jeśli to po lewej stronie wyświetlił się OBRÓCONY kwadrat
+lub prawą strzałkę jeśli to po prawej stronie wyświetlił się OBRÓCONY kwadrat.
 
-W tym zadaniu liczy się Twoja poprawność.
-Szybkość odpowiedzi nie ma dla nas znaczenia,
-ale masz maksymalnie 4 sekundy na udzielenie odpowiedzi,
-tak więc nie możesz zwlekać zbyt długo.
+Pamiętaj w tym zadaniu liczy się Twoja poprawność.
 
 Nacisnij SPACJĘ by przejść do ZADANIA.
