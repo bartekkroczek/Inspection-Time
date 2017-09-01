@@ -102,13 +102,13 @@ def main():
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES.values()))
 
-    for proc_version in ['LINES', 'SQUARES', 'CIRCLES']:
+    for proc_version in [ 'LINES','SQUARES', 'CIRCLES']:
         left_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version +'_LEFT.bmp'))
         right_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_MASK.bmp'))
-        fix_stim = visual.TextStim(win, text='+', height=3 * TEXT_SIZE, color='white')
-        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=3 * TEXT_SIZE,
-                                      pos=(0, -2.5 * VISUAL_OFFSET))
+        fix_stim = visual.TextStim(win, text='+', height=100, color='white')
+        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=100,
+                                      pos=(0, -75))
 
         # === Load data, configure log ===
 
