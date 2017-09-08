@@ -29,7 +29,7 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
 
 @atexit.register
 def save_beh_results():
-    with open(join('results', PART_ID + '_beh.csv'), 'w') as beh_file:
+    with open(join('results', PART_ID + "_" + str(random.choice(range(100, 1000))) + '_beh.csv'), 'w') as beh_file:
         beh_writer = csv.writer(beh_file)
         beh_writer.writerows(RESULTS)
     logging.flush()
@@ -98,16 +98,16 @@ def main():
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
     FRAME_RATE = get_frame_rate(win)
     PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
-    logging.LogFile('results/' + PART_ID + '.log', level=logging.INFO)  # errors logging
+    logging.LogFile('results/' + PART_ID + "_" + str(random.choice(range(100, 1000))) + '.log', level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES.values()))
 
-    for proc_version in [ 'LINES','SQUARES', 'CIRCLES']:
-        left_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version +'_LEFT.bmp'))
+    for proc_version in ['LINES', 'SQUARES', 'CIRCLES']:
+        left_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_LEFT.bmp'))
         right_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_MASK.bmp'))
-        fix_stim = visual.TextStim(win, text='+', height=100, color='white')
-        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='white', height=100,
+        fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
+        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=100,
                                       pos=(0, -75))
 
         # === Load data, configure log ===
@@ -129,10 +129,13 @@ def main():
             train_level += 1
             for soa in level:
                 idx += 1
-                corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+                corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
+                                     response_clock)
                 corr = int(corr)
                 correct_trials += corr
-                RESULTS.append([PART_ID, idx, proc_version, 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-', '-', rt])
+                RESULTS.append(
+                    [PART_ID, idx, proc_version, 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-',
+                     '-', rt])
 
         train_corr = int((float(correct_trials) / len(training)) * 100)
         show_info(win, join('.', proc_version + '_messages', 'feedback.txt'), insert=str(train_corr))
@@ -143,7 +146,8 @@ def main():
 
         old_rev_count_val = -1
         for idx, soa in enumerate(experiment, idx):
-            corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock)
+            corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
+                                 response_clock)
             level, reversal, revs_count = map(int, experiment.get_jump_status())
             if old_rev_count_val != revs_count:
                 old_rev_count_val = revs_count
@@ -151,7 +155,9 @@ def main():
             else:
                 rev_count_val = '-'
 
-            RESULTS.append([PART_ID, idx, proc_version, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal, rev_count_val, rt])
+            RESULTS.append(
+                [PART_ID, idx, proc_version, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal,
+                 rev_count_val, rt])
             experiment.set_corr(corr)
 
     # === Cleaning time ===
