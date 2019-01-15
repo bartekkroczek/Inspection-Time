@@ -1,9 +1,6 @@
-﻿﻿Brawo, ukończyłeś/aś pierwszą część zadania
+﻿﻿Brawo, ukończyłeś/aś trening
 
-Twój procent poprawności to:
-<--insert-->.
-
-Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawiła się DŁUŻSZA strzałka.
+Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawiła się DŁUŻSZA linia.
 Zadanie będzie robić się coraz trudniejsze, więc skoncentruj się.
 
-Nacisnij SPACJĘ by kontynuować zadanie.
+Nacisnij SPACJĘ by rozpocząć.

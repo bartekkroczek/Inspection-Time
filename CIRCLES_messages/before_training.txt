@@ -1,15 +1,13 @@
-
+﻿
 Teraz nastąpi kolejne zadanie, które będzie wyglądać analogicznie jak dwa poprzednie.
 
 W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
 pojawił się WIĘKSZY okręg.
-Na początku okręgi będą pojawiać się na ekranie na tyle
-długo, że zadanie to będzie proste.
-W dalszej części zadanie będzie stanie się trudniejsze.
+
+
+ZAPAMIĘTAJ:
 
 Naciśnij lewą strzałkę jeśli to po lewej stronie wyświetlił się WIĘKSZY okręg
 lub prawą strzałkę jeśli to po prawej stronie wyświetlił się WIĘKSZY okręg.
 
-Pamiętaj w tym zadaniu liczy się Twoja poprawność.
-
-Nacisnij SPACJĘ by przejść do ZADANIA.
+Nacisnij SPACJĘ by przejść do treningu

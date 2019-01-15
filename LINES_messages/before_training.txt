@@ -1,10 +1,10 @@
-W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
+﻿W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
 pojawiła się dłuższa linia.
 
 Na początku linie będą pojawiać się na ekranie na tyle
 długo, że zadanie to będzie proste.
 
-W dalszej części zadanie będzie stanie się trudniejsze.
+W dalszej części zadanie stanie się trudniejsze.
 
 Linie będą wyświetlane przez coraz krótszy czas tak, że mogą być one ledwo rozpoznawalne,
 pomimo tego staraj się udzielać poprawnych odpowiedzi.
@@ -14,16 +14,14 @@ Najpierw na ekranie pojawi się krzyżyk (+) - skup na nim wzrok.
 Po chwili krzyżyk zniknie, a na ekranie pojawią się dwie pionowe linie.
 Zawsze jedna z nich, losowo po lewej lub prawej stronie, będzie dłuższa.
 
-Następnie linie te zostaną zasłonięte przez maskujący wzór,
-a po zniknięciu tego wzoru nastąpi czas na Twoja odpowiedz.
+Następnie linie te zostaną zasłonięte przez maskujący wzór.
+
+UWAGA! Łatwo się pomylić i wykonywać zadanie na odwrót, ZAPAMIĘTAJ:
 
 Naciśnij lewą strzałkę jeśli to po lewej stronie wyświetliła się DŁUŻSZA linia
 lub prawą strzałkę jeśli to po prawej stronie wyświetliła się DŁUŻSZA linia.
 
-W tym zadaniu liczy się Twoja poprawność.
-Szybkość odpowiedzi nie ma dla nas znaczenia,
+Szybkość odpowiedzi nie ma znaczenia,
 ale masz maksymalnie 4 sekundy na udzielenie odpowiedzi.
 
-Zadanie to wymaga sporej koncentracji, postaraj się skupić i odpowiadać jak najpoprawniej.
-
-Nacisnij SPACJĘ by przejść do ZADANIA.
+Nacisnij SPACJĘ by przejść do TRENINGU.

@@ -71,7 +71,7 @@ def show_info(win, file_name, insert=''):
     :return:
     """
     msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color='white', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES['width'])
+    msg = visual.TextStim(win, color='grey', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES['width'])
     msg.draw()
     win.flip()
     key = event.waitKeys(keyList=['f7', 'return', 'space', 'left', 'right'] + KEYS)
@@ -102,13 +102,26 @@ def main():
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES.values()))
 
-    for proc_version in ['LINES', 'SQUARES', 'CIRCLES']:
+    pos_feedb = visual.TextStim(win, text=u'Poprawna odpowied\u017A', color='grey', height=40)
+    neg_feedb = visual.TextStim(win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
+    no_feedb = visual.TextStim(win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
+
+    for proc_version in ['LINES', 'SQUARES','CIRCLES']:
         left_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_LEFT.bmp'))
         right_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_MASK.bmp'))
         fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
-        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=100,
-                                      pos=(0, -75))
+        arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=30,
+                                      pos=(0, -200))
+        if proc_version == 'LINES':
+            question = 'Gdzie pojawila sie DLUZSZA linia?'
+        elif proc_version == 'SQUARES':
+            question = 'Gdzie pojawil OBROCONY kwadrat?'
+        else:
+            question = 'Gdzie pojawil sie WIEKSZY okreg?'
+
+        question_text = visual.TextStim(win, text=question, color='grey', height=20,
+                                      pos=(0, -180))
 
         # === Load data, configure log ===
 
@@ -130,12 +143,23 @@ def main():
             for soa in level:
                 idx += 1
                 corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                     response_clock)
+                                     question_text, response_clock)
                 corr = int(corr)
                 correct_trials += corr
                 RESULTS.append(
                     [PART_ID, idx, proc_version, 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-',
                      '-', rt])
+                ### FEEDBACK
+                if corr == 1:
+                    feedb_msg = pos_feedb
+                elif corr == 0:
+                    feedb_msg = neg_feedb
+                else:
+                    feedb_msg = no_feedb
+                for _ in range(100):
+                    feedb_msg.draw()
+                    check_exit()
+                    win.flip()
 
         train_corr = int((float(correct_trials) / len(training)) * 100)
         show_info(win, join('.', proc_version + '_messages', 'feedback.txt'), insert=str(train_corr))
@@ -147,7 +171,7 @@ def main():
         old_rev_count_val = -1
         for idx, soa in enumerate(experiment, idx):
             corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                 response_clock)
+                                 question_text, response_clock)
             level, reversal, revs_count = map(int, experiment.get_jump_status())
             if old_rev_count_val != revs_count:
                 old_rev_count_val = revs_count
@@ -160,6 +184,9 @@ def main():
                  rev_count_val, rt])
             experiment.set_corr(corr)
 
+            if idx == conf['MAX_TRIALS']:
+                break
+
     # === Cleaning time ===
     save_beh_results()
     logging.flush()
@@ -167,7 +194,7 @@ def main():
     win.close()
 
 
-def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, response_clock):
+def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,question_text, response_clock):
     trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
@@ -189,6 +216,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     event.clearEvents()
     for _ in range(config['RTIME']):  # Time for reaction
         arrow_label.draw()
+        question_text.draw()
         win.flip()
         keys = event.getKeys(keyList=KEYS)
         if keys:

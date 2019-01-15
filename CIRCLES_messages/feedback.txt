@@ -1,9 +1,6 @@
-﻿﻿Brawo, ukończyłeś/aś pierwszą część zadania
-
-Twój procent poprawności to:
-<--insert-->.
+﻿Ukończyłeś/aś trening
 
 Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawił się WIĘKSZY okręg.
 Zadanie będzie robić się coraz trudniejsze, więc skoncentruj się.
 
-Nacisnij SPACJĘ by kontynuować zadanie.
+Nacisnij SPACJĘ by rozpocząć
