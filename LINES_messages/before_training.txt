@@ -1,14 +1,6 @@
 ﻿W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
 pojawiła się dłuższa linia.
 
-Na początku linie będą pojawiać się na ekranie na tyle
-długo, że zadanie to będzie proste.
-
-W dalszej części zadanie stanie się trudniejsze.
-
-Linie będą wyświetlane przez coraz krótszy czas tak, że mogą być one ledwo rozpoznawalne,
-pomimo tego staraj się udzielać poprawnych odpowiedzi.
-
 Dokładnie zadanie będzie wyglądać następująco:
 Najpierw na ekranie pojawi się krzyżyk (+) - skup na nim wzrok.
 Po chwili krzyżyk zniknie, a na ekranie pojawią się dwie pionowe linie.
