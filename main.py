@@ -156,7 +156,7 @@ def main():
                     feedb_msg = neg_feedb
                 else:
                     feedb_msg = no_feedb
-                for _ in range(100):
+                for _ in range(30):
                     feedb_msg.draw()
                     check_exit()
                     win.flip()

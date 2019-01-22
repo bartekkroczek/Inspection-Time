@@ -2,6 +2,8 @@
 
 
 Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawił się OBRÓCONY kwadrat.
-Zadanie będzie robić się coraz trudniejsze, więc skoncentruj się.
+
+Nawet jesli kwadraty nie beda rozpoznawalne,
+ staraj się udzielać poprawnych odpowiedzi!
 
 Nacisnij SPACJĘ by rozpocząć
