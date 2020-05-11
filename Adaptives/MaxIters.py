@@ -1,4 +1,4 @@
-from AbstractAdaptive import AbstractAdaptive
+from .AbstractAdaptive import AbstractAdaptive
 
 
 class MaxIters(AbstractAdaptive):

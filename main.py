@@ -8,9 +8,7 @@ from os.path import join
 
 import yaml
 from psychopy import visual, event, logging, gui, core
-
 from Adaptives.NUpNDown import NUpNDown
-from misc.screen_misc import get_screen_res, get_frame_rate
 
 # GLOBALS
 TEXT_SIZE = 30
@@ -18,8 +16,8 @@ VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
 
 RESULTS = list()
-RESULTS.append(['PART_ID', 'Trial', 'Stimuli', 'Training', 'Training_level', 'FIXTIME', 'MTIME', 'Correct', 'SOA',
-                'Level', 'Reversal', 'Reversal_count', 'Latency'])
+RESULTS.append(['PART_ID', 'Trial', 'Stimuli', 'Training', 'FIXTIME', 'MTIME', 'Correct', 'SOA',
+                'Level', 'Reversal', 'Reversal_count', 'Latency', 'Rating'])
 
 
 class CorrectStim(object):  # Correct Stimulus Enumerator
@@ -27,7 +25,7 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
     RIGHT = 2
 
 
-@atexit.register
+# @atexit.register
 def save_beh_results():
     with open(join('results', PART_ID + "_" + str(random.choice(range(100, 1000))) + '_beh.csv'), 'w') as beh_file:
         beh_writer = csv.writer(beh_file)
@@ -71,7 +69,7 @@ def show_info(win, file_name, insert=''):
     :return:
     """
     msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color='grey', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES['width'])
+    msg = visual.TextStim(win, color='grey', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES[0])
     msg.draw()
     win.flip()
     key = event.waitKeys(keyList=['f7', 'return', 'space', 'left', 'right'] + KEYS)
@@ -94,31 +92,31 @@ def main():
         abort_with_error('Info dialog terminated.')
 
     # === Scene init ===
-    win = visual.Window(SCREEN_RES.values(), fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
+    win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
-    FRAME_RATE = get_frame_rate(win)
     PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
-    logging.LogFile('results/' + PART_ID + "_" + str(random.choice(range(100, 1000))) + '.log', level=logging.INFO)  # errors logging
+    logging.LogFile(join('.', 'results',  f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"), level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
-    logging.info('SCREEN RES: {}'.format(SCREEN_RES.values()))
-
+    logging.info('SCREEN RES: {}'.format(SCREEN_RES))
     pos_feedb = visual.TextStim(win, text=u'Poprawna odpowied\u017A', color='grey', height=40)
     neg_feedb = visual.TextStim(win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
     no_feedb = visual.TextStim(win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
+    show_info(win, join('.', 'messages', 'hello.txt'))
 
-    for proc_version in ['LINES', 'SQUARES','CIRCLES']:
-        left_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_LEFT.bmp'))
-        right_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_RIGHT.bmp'))
-        mask_stim = visual.ImageStim(win, image=join('.', 'stims', proc_version + '_MASK.bmp'))
-        fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
+    for proc_version in ['SQUARES','CIRCLES']:
+        left_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_LEFT.bmp'))
+        right_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_RIGHT.bmp'))
+        mask_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_MASK.bmp'))
+        # fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
+        fix_stim = visual.ImageStim(win, image=join('.', 'stims', 'PRE_STIMULI.bmp'))
         arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=30,
                                       pos=(0, -200))
-        if proc_version == 'LINES':
-            question = 'Gdzie pojawila sie DLUZSZA linia?'
-        elif proc_version == 'SQUARES':
+        if proc_version == 'SQUARES':
             question = 'Gdzie pojawil OBROCONY kwadrat?'
-        else:
+        elif proc_version == 'CIRCLES':
             question = 'Gdzie pojawil sie WIEKSZY okreg?'
+        else:
+            raise NotImplementedError(f'Stimulus type: {proc_version} not implemented.')
 
         question_text = visual.TextStim(win, text=question, color='grey', height=20,
                                       pos=(0, -180))
@@ -126,54 +124,21 @@ def main():
         # === Load data, configure log ===
 
         response_clock = core.Clock()
-        conf = yaml.load(open(proc_version + '_config.yaml'))
+        conf = yaml.load(open(join('.', 'configs', f'{proc_version}_config.yaml')))
 
+
+        show_info(win, join('.', 'messages', f'{proc_version}_before_training.txt'))
         # === Training ===
-        training = list()
-        for train_desc in conf['Training']:
-            training.append([train_desc['soa']] * train_desc['reps'])
 
-        show_info(win, join('.', proc_version + '_messages', 'before_training.txt'))
-
-        correct_trials = 0
-        idx = 0
-        train_level = 0
-        for level in training:
-            train_level += 1
-            for soa in level:
-                idx += 1
-                corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                     question_text, response_clock)
-                corr = int(corr)
-                correct_trials += corr
-                RESULTS.append(
-                    [PART_ID, idx, proc_version, 1, train_level, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-',
-                     '-', rt])
-                ### FEEDBACK
-                if corr == 1:
-                    feedb_msg = pos_feedb
-                elif corr == 0:
-                    feedb_msg = neg_feedb
-                else:
-                    feedb_msg = no_feedb
-                for _ in range(30):
-                    feedb_msg.draw()
-                    check_exit()
-                    win.flip()
-
-        train_corr = int((float(correct_trials) / len(training)) * 100)
-        show_info(win, join('.', proc_version + '_messages', 'feedback.txt'), insert=str(train_corr))
-
-        # === Experiment ===
-
-        experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+        training = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
 
         old_rev_count_val = -1
-        for idx, soa in enumerate(experiment, idx):
-            corr, rt = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
+        correct_trials = 0
+        for idx, soa in enumerate(training):
+            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
                                  question_text, response_clock)
-            experiment.set_corr(corr)
-            level, reversal, revs_count = map(int, experiment.get_jump_status())
+            training.set_corr(corr)
+            level, reversal, revs_count = map(int, training.get_jump_status())
             if old_rev_count_val != revs_count:
                 old_rev_count_val = revs_count
                 rev_count_val = revs_count
@@ -181,17 +146,42 @@ def main():
                 rev_count_val = '-'
 
             RESULTS.append(
-                [PART_ID, idx, proc_version, 0, '-', conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal,
-                 rev_count_val, rt])
+                [PART_ID, idx, proc_version, 1, conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal,
+                 rev_count_val, rt, rating])
+
+            ### FEEDBACK
+            if corr == 1:
+                feedb_msg = pos_feedb
+                correct_trials += 1
+            elif corr == 0:
+                feedb_msg = neg_feedb
+            else:
+                feedb_msg = no_feedb
+            for _ in range(30):
+                feedb_msg.draw()
+                check_exit()
+                win.flip()
 
 
-            if idx == conf['MAX_TRIALS']:
-                break
+        # === experiment ===
+        experiment = [soa] * conf['NO_TRIALS']
+
+        show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
+
+        for idx in range(idx,conf['NO_TRIALS']+idx):
+            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
+                                    question_text, response_clock)
+            corr = int(corr)
+            correct_trials += corr
+            RESULTS.append(
+                [PART_ID, idx, proc_version, 0, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-',
+                    '-', rt, rating])
+
 
     # === Cleaning time ===
     save_beh_results()
     logging.flush()
-    show_info(win, 'end.txt')
+    show_info(win, join('.', 'messages', 'end.txt'))
     win.close()
 
 
@@ -200,7 +190,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
     rt = -1.0
-    for _ in range(config['FIXTIME']):  # Fixation cross
+    for _ in range(config['FIXTIME']):  # Fixation octagon
         fix_stim.draw()
         win.flip()
         check_exit()
@@ -225,10 +215,22 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
             rt = response_clock.getTime()
             break
         check_exit()
-    return corr, rt
+    # Rating Scale
+    ratingScale = visual.RatingScale(win, size = 0.8, low = 1, high = 5, noMouse=True, 
+    markerStart = 3, stretch= 1.4, scale="1=zgadywalem, 5=jestem pewny", acceptPreText= 'Wybierz')
+    while ratingScale.noResponse:
+        ratingScale.draw()
+        win.flip()
+    rating = ratingScale.getRating()
+    win.flip()
+    # break + jitter
+    wait_time_in_secs = 1 + random.choice(range(0, 120))/ 60.0
+    core.wait(wait_time_in_secs)
+    return corr, rt, rating
 
 
 if __name__ == '__main__':
     PART_ID = ''
-    SCREEN_RES = get_screen_res()
+    SCREEN_RES = [1920, 1080]
+    FRAME_RATE = 60
     main()
