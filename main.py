@@ -112,9 +112,9 @@ def main():
         arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=30,
                                       pos=(0, -200))
         if proc_version == 'SQUARES':
-            question = 'Gdzie pojawil OBROCONY kwadrat?'
+            question = u'Gdzie pojawi\u0142 si\u0119 OBROCONY kwadrat?'
         elif proc_version == 'CIRCLES':
-            question = 'Gdzie pojawil sie WIEKSZY okreg?'
+            question = u'Gdzie pojawi\u0142 si\u0119 WI\u0118KSZY okr\u0119g?'
         else:
             raise NotImplementedError(f'Stimulus type: {proc_version} not implemented.')
 
@@ -216,8 +216,9 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
             break
         check_exit()
     # Rating Scale
-    ratingScale = visual.RatingScale(win, size = 0.8, low = 1, high = 5, noMouse=True, 
-    markerStart = 3, stretch= 1.4, scale="1=zgadywalem, 5=jestem pewny", acceptPreText= 'Wybierz')
+    
+    ratingScale = visual.RatingScale(win, size = 0.8, noMouse=True, 
+    markerStart = 2, stretch= 1.4, scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi", acceptPreText= 'Wybierz',choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
     while ratingScale.noResponse:
         ratingScale.draw()
         win.flip()

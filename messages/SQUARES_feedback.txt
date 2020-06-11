@@ -1,4 +1,4 @@
-﻿﻿Brawo, ukończyłeś/aś trening
+﻿Brawo, ukończyłeś/aś trening
 
 
 Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawił się OBRÓCONY kwadrat.

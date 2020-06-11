@@ -1,6 +1,6 @@
 # Inspection-Time
 
-[![Demo Video](https://img.youtube.com/vi/kNdu6IB2Zl0/0.jpg)](https://www.youtube.com/watch?v=kNdu6IB2Zl0E)
+[![Demo Video](https://img.youtube.com/vi/C44MOs_Y-XE/0.jpg)](https://www.youtube.com/watch?v=C44MOs_Y-XE)
 
 # Procedure scheme
 
@@ -36,6 +36,6 @@
 - [ ] EEG Integtarion
 - [ ] Eye Tracker Integration
 - [ ] Timing Precision tests
-- [ ] Rating scale details
+- [x] Rating scale details
 - [ ] "Octagon" presentation time
 - [ ] Config params selection
