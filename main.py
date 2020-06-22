@@ -6,6 +6,7 @@ import csv
 import random
 from os.path import join
 
+import numpy as np
 import yaml
 from psychopy import visual, event, logging, gui, core
 from Adaptives.NUpNDown import NUpNDown
@@ -134,11 +135,14 @@ def main():
 
         old_rev_count_val = -1
         correct_trials = 0
+        soas = []
         for idx, soa in enumerate(training):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
                                  question_text, response_clock)
             training.set_corr(corr)
             level, reversal, revs_count = map(int, training.get_jump_status())
+            if reversal:
+                soas.append(soa)
             if old_rev_count_val != revs_count:
                 old_rev_count_val = revs_count
                 rev_count_val = revs_count
@@ -164,6 +168,7 @@ def main():
 
 
         # === experiment ===
+        soa = int(np.mean(soas[:int(0.6 * len(soas))])) 
         experiment = [soa] * conf['NO_TRIALS']
 
         show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
