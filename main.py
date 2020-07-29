@@ -4,14 +4,18 @@ import atexit
 import codecs
 import csv
 import random
+import pylink
+import os
 from os.path import join
 
 import numpy as np
 import yaml
-from psychopy import visual, event, logging, gui, core
+from psychopy import visual, event, logging, gui, core, monitors
+from EyeLinkCoreGraphicsPsychoPy import EyeLinkCoreGraphicsPsychoPy
 from Adaptives.NUpNDown import NUpNDown
 
 # GLOBALS
+DEBUG = False
 TEXT_SIZE = 30
 VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
@@ -28,7 +32,7 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
 
 # @atexit.register
 def save_beh_results():
-    with open(join('results', PART_ID + "_" + str(random.choice(range(100, 1000))) + '_beh.csv'), 'w') as beh_file:
+    with open(join('results', 'beh', PART_ID + "_" + str(random.choice(range(100, 1000))) + '_beh.csv'), 'w') as beh_file:
         beh_writer = csv.writer(beh_file)
         beh_writer.writerows(RESULTS)
     logging.flush()
@@ -91,18 +95,97 @@ def main():
     dictDlg = gui.DlgFromDict(dictionary=info, title='Czas detekcji wzrokowej')
     if not dictDlg.OK:
         abort_with_error('Info dialog terminated.')
+    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK'] 
+
+    if DEBUG:
+        tk = pylink.EyeLink(None)  # Simulation mode
+    else:
+        tk = pylink.EyeLink('100.1.1.1')
+
+    dataFileName = f"{PART_ID}.EDF"
+    tk.openDataFile(dataFileName)
+    # add personalized data file header (preamble text)
+    tk.sendCommand(f"add_file_preamble_text 'Inspection Time EyeTracking EXP PART_ID: {PART_ID}'")
+
 
     # === Scene init ===
-    win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
+    # we need to set monitor parameters to use the different PsychoPy screen "units"
+    mon = monitors.Monitor('myMonitor', width=53.0, distance=100.0)
+    mon.setSizePix(SCREEN_RES)
+    win = visual.Window(SCREEN_RES, fullscr=(not DEBUG), monitor=mon, color='black', winType='pyglet', units='pix', screen=0, allowStencil=True)
+    genv = EyeLinkCoreGraphicsPsychoPy(tk, win)
+
+    # set background and foreground colors, (-1,-1,-1)=black, (1,1,1)=white
+    genv.backgroundColor = (-1,-1,-1)
+    genv.foregroundColor = (1,1,1)
+    genv.enableBeep = True
+    genv.targetSize = 32
+    genv.calTarget = 'circle'
+
+    pylink.openGraphicsEx(genv)
+
+    tk.setOfflineMode()
+    pylink.pumpDelay(100)
+
+    # see Eyelink Installation Guide, Section 8.4: Customizing Your PHYSICAL.INI Settings
+    tk.sendCommand("screen_pixel_coords = 0 0 %d %d" % (scnWidth-1, scnHeight-1))
+    # save screen resolution in EDF data, so Data Viewer can correctly load experimental graphics
+    tk.sendMessage("DISPLAY_COORDS = 0 0 %d %d" % (scnWidth-1, scnHeight-1))
+    # sampling rate, 250, 500, 1000, or 2000; this command is not supported for EyeLInk II/I trackers
+    tk.sendCommand("sample_rate 1000")
+    # detect eye events based on "GAZE" (or "HREF") data
+    tk.sendCommand("recording_parse_type = GAZE")
+    # Saccade detection thresholds: 0-> standard/coginitve, 1-> sensitive/psychophysiological
+    tk.sendCommand("select_parser_configuration 0")
+    # choose a calibration type, H3, HV3, HV5, HV13 (HV = horiztonal/vertical),
+    tk.sendCommand("calibration_type = HV9")
+
+    # tracker hardware, 1-EyeLink I, 2-EyeLink II, 3-Newer models (1000/1000Plus/Portable DUO)
+    hardware_ver = tk.getTrackerVersion()
+
+    # tracking software version
+    software_ver = 0
+    if hardware_ver == 3:
+        tvstr = tk.getTrackerVersionString()
+        vindex = tvstr.find("EYELINK CL")
+        software_ver = float(tvstr.split()[-1])
+
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
-    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
-    logging.LogFile(join('.', 'results',  f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"), level=logging.INFO)  # errors logging
+    logging.LogFile(join('.', 'results', 'log', f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"), level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES))
     pos_feedb = visual.TextStim(win, text=u'Poprawna odpowied\u017A', color='grey', height=40)
     neg_feedb = visual.TextStim(win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
     no_feedb = visual.TextStim(win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
     show_info(win, join('.', 'messages', 'hello.txt'))
+
+    # sample and event data saved in EDF data file
+    tk.sendCommand(
+        "file_event_filter = LEFT,RIGHT,FIXATION,SACCADE,BLINK,MESSAGE,BUTTON,INPUT")
+    if software_ver >= 4:
+        tk.sendCommand(
+            "file_sample_data  = LEFT,RIGHT,GAZE,GAZERES,PUPIL,HREF,AREA,STATUS,HTARGET,INPUT")
+    else:
+        tk.sendCommand(
+            "file_sample_data  = LEFT,RIGHT,GAZE,GAZERES,PUPIL,HREF,AREA,STATUS,INPUT")
+
+    # sample and event data available over the link
+    tk.sendCommand(
+        "link_event_filter = LEFT,RIGHT,FIXATION,FIXUPDATE,SACCADE,BLINK,BUTTON,INPUT")
+    if software_ver >= 4:
+        tk.sendCommand(
+            "link_sample_data  = LEFT,RIGHT,GAZE,GAZERES,PUPIL,HREF,AREA,STATUS,HTARGET,INPUT")
+    else:
+        tk.sendCommand(
+            "link_sample_data  = LEFT,RIGHT,GAZE,GAZERES,PUPIL,HREF,AREA,STATUS,INPUT")
+
+    msg = visual.TextStim(win, text='Press ENTER twice to calibrate the tracker\n' +
+                                    'In the task, press any key to end a trial', color='grey')
+    msg.draw()
+    win.flip()
+    event.waitKeys()
+    tk.doTrackerSetup()
+
 
     for proc_version in ['SQUARES','CIRCLES']:
         left_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_LEFT.bmp'))
@@ -138,7 +221,7 @@ def main():
         soas = []
         for idx, soa in enumerate(training):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                 question_text, response_clock)
+                                 question_text, response_clock, idx, tk)
             training.set_corr(corr)
             level, reversal, revs_count = map(int, training.get_jump_status())
             if reversal:
@@ -169,40 +252,97 @@ def main():
 
         # === experiment ===
         soa = int(np.mean(soas[:int(0.6 * len(soas))])) 
-        experiment = [soa] * conf['NO_TRIALS']
 
         show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
 
         for idx in range(idx,conf['NO_TRIALS']+idx):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                    question_text, response_clock)
+                                    question_text, response_clock, idx, tk)
             corr = int(corr)
             correct_trials += corr
             RESULTS.append(
                 [PART_ID, idx, proc_version, 0, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-',
                     '-', rt, rating])
 
-
-    # === Cleaning time ===
-    save_beh_results()
-    logging.flush()
     show_info(win, join('.', 'messages', 'end.txt'))
-    win.close()
 
 
-def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,question_text, response_clock):
+    # close the EDF data file and put the tracker in idle mode
+    tk.setOfflineMode()
+    pylink.pumpDelay(100)
+    tk.closeDataFile()
+
+    # download EDF file to Display PC and put it in local folder ('edfData')
+    msg = 'EDF data is transfering from EyeLink Host PC...'
+    edfTransfer = visual.TextStim(win, text=msg, color='grey')
+    edfTransfer.draw()
+    win.flip()
+    pylink.pumpDelay(500)
+
+    # make sure the 'edfData' folder is there, create one if not
+    dataFolder = join('.', 'results', 'edfData')
+    if not os.path.exists(dataFolder):
+        os.makedirs(dataFolder)
+    tk.receiveDataFile(dataFileName, dataFolder + os.sep + dataFileName)
+
+    # clean
+    save_beh_results()
+    tk.close()
+    logging.flush()
+    core.quit()
+    window.close()
+
+
+def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,question_text, response_clock, trial_index, tk):
     trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
     rt = -1.0
-    for _ in range(config['FIXTIME']):  # Fixation octagon
+    # put the tracker in idle mode before we transfer the backdrop image
+    tk.setOfflineMode()
+    pylink.pumpDelay(100)
+
+    # send the standard "TRIALID" message to mark the start of a trial
+    tk.sendMessage('TRIALID %d' % trial_index)
+
+    # record_status_message : show some info on the Host PC - OPTIONAL
+    tk.sendCommand("record_status_message 'TRIAL: %d'" % trial_index) 
+    
+     # drift check
+    # the doDriftCorrect() function requires target position in integers
+    # the last two arguments: draw_target (1-default, 0-user draw the target then call this function)
+    #                         allow_setup (1-press ESCAPE to recalibrate, 0-not allowed)
+    try:
+        err = tk.doDriftCorrect(int(scnWidth/2), 0, 1, 1)
+    except:
+        tk.doTrackerSetup()
+
+     # put the tracker in idle mode before we start recording
+    tk.setOfflineMode()
+    pylink.pumpDelay(100)
+
+    # start recording
+    # arguments: sample_to_file, events_to_file, sample_over_link, event_over_link (1-yes, 0-no)
+
+    err = tk.startRecording(1, 1, 1, 1)
+    pylink.pumpDelay(100)  # wait for 100 ms to cache some samples
+
+    # which eye(s) are available: 0-left, 1-right, 2-binocular
+    eyeTracked = tk.eyeAvailable()
+    if eyeTracked == 2:  # use right eye data if tracking binocularly
+        eyeTracked = 1
+    tk.sendMessage("trial_run")
+    win.callOnFlip(tk.sendMessage, "fixation")
+    for _ in range(config['FIXTIME']):  # Fixation hexagon
         fix_stim.draw()
         win.flip()
         check_exit()
+    win.callOnFlip(tk.sendMessage, "stimuli")
     for _ in range(soa):  # Stimulus presentation
         stim.draw()
         win.flip()
         check_exit()
+    win.callOnFlip(tk.sendMessage, "mask")
     for _ in range(config['MTIME']):  # Mask presentation
         mask_stim.draw()
         win.flip()
@@ -210,6 +350,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     corr = False  # Used if timeout
     win.callOnFlip(response_clock.reset)
     event.clearEvents()
+    win.callOnFlip(tk.sendMessage, "reaction")
     for _ in range(config['RTIME']):  # Time for reaction
         arrow_label.draw()
         question_text.draw()
@@ -222,6 +363,19 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
         check_exit()
     # Rating Scale
     
+    tk.sendMessage('trial_finished')
+
+    # clear the screen
+    win.flip()
+    tk.sendMessage('blank_screen')
+
+    # stop recording
+    tk.stopRecording()
+    # clear the host display, this command is needed if you have backdrop image on the Host
+    tk.sendCommand('clear_screen 0')
+    # send over the standard 'TRIAL_RESULT' message to mark the end of trial
+    tk.sendMessage('TRIAL_RESULT 0')
+
     ratingScale = visual.RatingScale(win, size = 0.8, noMouse=True, 
     markerStart = 2, stretch= 1.4, scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi", acceptPreText= 'Wybierz',choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
     while ratingScale.noResponse:
@@ -237,6 +391,6 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
 
 if __name__ == '__main__':
     PART_ID = ''
-    SCREEN_RES = [1920, 1080]
+    scnWidth, scnHeight = SCREEN_RES = [1920, 1080]
     FRAME_RATE = 60
     main()
