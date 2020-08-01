@@ -1,0 +1,113 @@
+12.2563 	INFO 	FRAME RATE: 60
+12.2564 	INFO 	SCREEN RES: [1920, 1080]
+12.2639 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=40, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=array([128., 128., 128.]), text='Poprawna odpowiedź', units='pix', win=Window(...), wrapWidth=500)
+12.2670 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=40, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=array([128., 128., 128.]), text='Niepoprawna odpowiedź', units='pix', win=Window(...), wrapWidth=500)
+12.2711 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=40, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=array([128., 128., 128.]), text='Nie udzieliłeś odpowiedzi', units='pix', win=Window(...), wrapWidth=500)
+12.2822 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=array([128., 128., 128.]), text='Poczekaj na przyjście badacza. ', units='pix', win=Window(...), wrapWidth=1920)
+14.4930 	DATA 	Keypress: space
+14.5221 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=array([128., 128., 128.]), text=str(...), units='pix', win=Window(...), wrapWidth=500)
+15.2446 	DATA 	Keypress: escape
+15.2449 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+15.2449 	EXP 	window1: color = (-1, -1, -1)
+15.2632 	EXP 	unnamed TextStim: autoDraw = False
+15.2632 	EXP 	unnamed TextStim: autoDraw = False
+15.4845 	DATA 	Keypress: escape
+15.4846 	EXP 	window1: units = 'pix'
+15.4847 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+15.4847 	EXP 	window1: color = (-1, -1, -1)
+15.4966 	EXP 	unnamed TextStim: autoDraw = True
+15.4966 	EXP 	unnamed TextStim: autoDraw = False
+15.4966 	EXP 	unnamed TextStim: autoDraw = False
+15.5331 	EXP 	Created unnamed ImageStim = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, autoLog=True, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/SQUARES_LEFT.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+15.5667 	EXP 	Created unnamed ImageStim = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, autoLog=True, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/SQUARES_RIGHT.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+15.5822 	EXP 	Created unnamed ImageStim = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, autoLog=True, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/SQUARES_MASK.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+15.5970 	EXP 	Created unnamed ImageStim = ImageStim(__class__=<class 'psychopy.visual.image.ImageStim'>, autoLog=True, color=array([1., 1., 1.]), colorSpace='rgb', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, image='./stims/PRE_STIMULI.bmp', interpolate=False, mask=None, maskParams=None, name='unnamed ImageStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), size=array([960, 720]), texRes=128, units='pix', win=Window(...))
+15.6020 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=30, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([   0., -200.]), rgb=array([128., 128., 128.]), text='←       →', units='pix', win=Window(...), wrapWidth=500)
+15.6077 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([   0., -180.]), rgb=array([128., 128., 128.]), text='Gdzie pojawił się OBROCONY kwadrat?', units='pix', win=Window(...), wrapWidth=500)
+15.6546 	EXP 	Created unnamed TextStim = TextStim(__class__=<class 'psychopy.visual.text.TextStim'>, alignHoriz=method-wrapper(...), alignText='center', alignVert=method-wrapper(...), anchorHoriz='center', anchorVert='center', antialias=True, autoLog=True, bold=False, color='grey', colorSpace='named', contrast=1.0, depth=0, flipHoriz=False, flipVert=False, font='', fontFiles=[], height=20, italic=False, languageStyle='LTR', name='unnamed TextStim', opacity=1.0, ori=0.0, pos=array([0., 0.]), rgb=array([128., 128., 128.]), text=str(...), units='pix', win=Window(...), wrapWidth=1920)
+16.6364 	DATA 	Keypress: space
+16.7461 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+16.7462 	EXP 	window1: color = (-1, -1, -1)
+16.7633 	EXP 	unnamed TextStim: autoDraw = False
+16.7633 	EXP 	unnamed TextStim: autoDraw = False
+16.7634 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+16.7634 	EXP 	window1: color = (-1, -1, -1)
+16.7914 	EXP 	unnamed TextStim: autoDraw = True
+16.7914 	EXP 	unnamed TextStim: autoDraw = False
+16.7914 	EXP 	unnamed TextStim: autoDraw = False
+16.7954 	EXP 	Created unnamed Circle = Circle(__class__=<class 'psychopy.visual.circle.Circle'>, autoDraw=False, autoLog=True, closeShape=True, color=method-wrapper(...), colorSpace=None, contrast=1.0, depth=0, fillColor=array([-1., -1., -1.]), fillColorSpace='rgb', fillRGB=array([-1., -1., -1.]), interpolate=True, lineColor=array([1., 1., 1.]), lineColorSpace='rgb', lineRGB=array([1., 1., 1.]), lineWidth=16.0, name='unnamed Circle', opacity=1.0, ori=array(0.), pos=array([0., 0.]), size=array([1., 1.]), units='pix', vertices=ndarray(...), win=Window(...))
+16.8251 	EXP 	unnamed Circle: pos = (0.0, 540.0)
+16.8256 	EXP 	Sound  started
+16.9250 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+16.9251 	EXP 	window1: color = (-1, -1, -1)
+16.9466 	EXP 	unnamed TextStim: autoDraw = False
+16.9466 	EXP 	unnamed TextStim: autoDraw = False
+16.9745 	EXP 	window1: units = 'pix'
+16.9746 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+16.9747 	EXP 	window1: color = (-1, -1, -1)
+17.0077 	EXP 	unnamed TextStim: autoDraw = False
+17.0077 	EXP 	unnamed TextStim: autoDraw = False
+17.0078 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+17.0078 	EXP 	window1: color = (-1, -1, -1)
+17.0409 	EXP 	unnamed TextStim: autoDraw = False
+17.0409 	EXP 	unnamed TextStim: autoDraw = False
+18.8524 	DATA 	Keypress: escape
+18.8525 	EXP 	window1: units = 'pix'
+18.8526 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+18.8527 	EXP 	window1: color = (-1, -1, -1)
+18.8634 	EXP 	unnamed TextStim: autoDraw = True
+18.8634 	EXP 	unnamed TextStim: autoDraw = False
+18.8634 	EXP 	unnamed TextStim: autoDraw = False
+25.6672 	DATA 	Keypress: right
+25.7442 	EXP 	Created unnamed RatingScale = RatingScale(__class__=type(...), acceptKeys=['return'], acceptPreText=UNKNOWN, acceptSize=UNKNOWN, acceptText='accept?', autoLog=True, choices=['Żadna', 'Mała', 'Duża', 'Całkowita'], depth=0, disappear=False, flipVert=False, high=3, kwargs=UNKNOWN, labels=list(...), leftKeys=['left'], lineColor='White', low=0, marker=ShapeStim(...), markerColor='DarkBlue', markerExpansion=UNKNOWN, markerStart=2.0, maxTime=0.0, minTime=0.4, mouseOnly=False, name='unnamed RatingScale', noMouse=True, pos=[0.0, -0.4], precision=1, respKeys=['0', '1', '2', '3'], rightKeys=['right'], scale=str(...), self=UNKNOWN, showAccept=True, showValue=True, singleClick=False, size=0.48, skipKeys=['tab'], stretch=1.4, textColor='LightGray', textFont='Helvetica Bold', textSize=0.096, tickHeight=1.0, tickMarks=3.0, win=Window(...))
+25.7638 	EXP 	unnamed RatingScale: flipVert = False
+25.7638 	EXP 	unnamed RatingScale: autoLog = True
+35.9695 	DATA 	Keypress: return
+35.9696 	DATA 	RatingScale unnamed RatingScale: (key response) rating=Duża
+35.9696 	DATA 	RatingScale unnamed RatingScale: rating RT=10.225
+35.9696 	DATA 	RatingScale unnamed RatingScale: history=[('Duża', 0.0), ('Duża', 10.225)]
+38.4581 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+38.4581 	EXP 	window1: color = (-1, -1, -1)
+38.4811 	EXP 	unnamed TextStim: autoDraw = False
+38.4811 	EXP 	unnamed TextStim: autoDraw = False
+38.4813 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+38.4813 	EXP 	window1: color = (-1, -1, -1)
+38.5079 	EXP 	unnamed TextStim: autoDraw = True
+38.5079 	EXP 	unnamed TextStim: autoDraw = False
+38.5079 	EXP 	unnamed TextStim: autoDraw = False
+38.5111 	EXP 	Created unnamed Circle = Circle(__class__=<class 'psychopy.visual.circle.Circle'>, autoDraw=False, autoLog=True, closeShape=True, color=method-wrapper(...), colorSpace=None, contrast=1.0, depth=0, fillColor=array([-1., -1., -1.]), fillColorSpace='rgb', fillRGB=array([-1., -1., -1.]), interpolate=True, lineColor=array([1., 1., 1.]), lineColorSpace='rgb', lineRGB=array([1., 1., 1.]), lineWidth=16.0, name='unnamed Circle', opacity=1.0, ori=array(0.), pos=array([0., 0.]), size=array([1., 1.]), units='pix', vertices=ndarray(...), win=Window(...))
+38.5412 	EXP 	unnamed Circle: pos = (0.0, 540.0)
+38.5416 	EXP 	Sound  started
+38.6411 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+38.6411 	EXP 	window1: color = (-1, -1, -1)
+38.6479 	EXP 	unnamed TextStim: autoDraw = False
+38.6479 	EXP 	unnamed TextStim: autoDraw = False
+38.6748 	EXP 	window1: units = 'pix'
+38.6749 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+38.6749 	EXP 	window1: color = (-1, -1, -1)
+38.6816 	EXP 	unnamed TextStim: autoDraw = False
+38.6816 	EXP 	unnamed TextStim: autoDraw = False
+38.6817 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+38.6817 	EXP 	window1: color = (-1, -1, -1)
+38.7079 	EXP 	unnamed TextStim: autoDraw = False
+38.7079 	EXP 	unnamed TextStim: autoDraw = False
+43.7162 	DATA 	Keypress: escape
+43.7163 	EXP 	window1: units = 'pix'
+43.7164 	ERROR 	If you setColor with a numeric color value then you need to specify a color space, e.g. setColor([1,1,-1],'rgb'), unless you used a numeric value previously in which case PsychoPy will reuse that color space.)
+43.7165 	EXP 	window1: color = (-1, -1, -1)
+43.7348 	EXP 	unnamed TextStim: autoDraw = True
+43.7348 	EXP 	unnamed TextStim: autoDraw = False
+43.7348 	EXP 	unnamed TextStim: autoDraw = False
+49.7651 	EXP 	Created unnamed RatingScale = RatingScale(__class__=type(...), acceptKeys=['return'], acceptPreText=UNKNOWN, acceptSize=UNKNOWN, acceptText='accept?', autoLog=True, choices=['Żadna', 'Mała', 'Duża', 'Całkowita'], depth=0, disappear=False, flipVert=False, high=3, kwargs=UNKNOWN, labels=list(...), leftKeys=['left'], lineColor='White', low=0, marker=ShapeStim(...), markerColor='DarkBlue', markerExpansion=UNKNOWN, markerStart=2.0, maxTime=0.0, minTime=0.4, mouseOnly=False, name='unnamed RatingScale', noMouse=True, pos=[0.0, -0.4], precision=1, respKeys=['0', '1', '2', '3'], rightKeys=['right'], scale=str(...), self=UNKNOWN, showAccept=True, showValue=True, singleClick=False, size=0.48, skipKeys=['tab'], stretch=1.4, textColor='LightGray', textFont='Helvetica Bold', textSize=0.096, tickHeight=1.0, tickMarks=3.0, win=Window(...))
+49.7821 	EXP 	unnamed RatingScale: flipVert = False
+49.7821 	EXP 	unnamed RatingScale: autoLog = True
+53.6548 	DATA 	Keypress: escape
+59.2885 	DATA 	Keypress: f7
+60.3219 	DATA 	Keypress: return
+60.3221 	DATA 	RatingScale unnamed RatingScale: (key response) rating=Duża
+60.3222 	DATA 	RatingScale unnamed RatingScale: rating RT=10.557
+60.3222 	DATA 	RatingScale unnamed RatingScale: history=[('Duża', 0.0), ('Duża', 10.557)]
+62.7106 	DATA 	Keypress: f7
+62.7108 	DATA 	Keypress: f7
+62.9119 	CRITICAL 	Experiment finished by user! f7 pressed.
+62.9256 	EXP 	window1: mouseVisible = True

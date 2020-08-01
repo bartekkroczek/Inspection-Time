@@ -3,19 +3,25 @@
 import atexit
 import codecs
 import csv
-import random
-import pylink
 import os
+import random
 from os.path import join
 
 import numpy as np
+import pylink
 import yaml
-from psychopy import visual, event, logging, gui, core, monitors
-from EyeLinkCoreGraphicsPsychoPy import EyeLinkCoreGraphicsPsychoPy
+from psychopy import core, event, gui, logging, monitors, visual
+
+import u3
 from Adaptives.NUpNDown import NUpNDown
+from EyeLinkCoreGraphicsPsychoPy import EyeLinkCoreGraphicsPsychoPy
+
+port = u3.U3()
+FIO1 = 6701  # the address of line FIO1 (EEG)
+
 
 # GLOBALS
-DEBUG = False
+DEBUG = True
 TEXT_SIZE = 30
 VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
@@ -29,6 +35,14 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
     LEFT = 1
     RIGHT = 2
 
+
+class Triggers(object):
+    CLEAR = 0xFF00
+    FIXATION = 0xFF01
+    STIMULI = 0xFF02
+    MASK = 0xFF04
+    REACTION = 0xFF08
+    FINISHED = 0xFF10
 
 # @atexit.register
 def save_beh_results():
@@ -64,7 +78,8 @@ def read_text_from_file(file_name, insert=''):
 def check_exit(key='f7'):
     stop = event.getKeys(keyList=[key])
     if stop:
-        abort_with_error('Experiment finished by user! {} pressed.'.format(key))
+        abort_with_error(
+            'Experiment finished by user! {} pressed.'.format(key))
 
 
 def show_info(win, file_name, insert=''):
@@ -74,12 +89,15 @@ def show_info(win, file_name, insert=''):
     :return:
     """
     msg = read_text_from_file(file_name, insert=insert)
-    msg = visual.TextStim(win, color='grey', text=msg, height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES[0])
+    msg = visual.TextStim(win, color='grey', text=msg,
+                          height=TEXT_SIZE - 10, wrapWidth=SCREEN_RES[0])
     msg.draw()
     win.flip()
-    key = event.waitKeys(keyList=['f7', 'return', 'space', 'left', 'right'] + KEYS)
+    key = event.waitKeys(
+        keyList=['f7', 'return', 'space', 'left', 'right'] + KEYS)
     if key == ['f7']:
-        abort_with_error('Experiment finished by user on info screen! F7 pressed.')
+        abort_with_error(
+            'Experiment finished by user on info screen! F7 pressed.')
     win.flip()
 
 
@@ -95,29 +113,33 @@ def main():
     dictDlg = gui.DlgFromDict(dictionary=info, title='Czas detekcji wzrokowej')
     if not dictDlg.OK:
         abort_with_error('Info dialog terminated.')
-    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK'] 
+    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
 
     if DEBUG:
         tk = pylink.EyeLink(None)  # Simulation mode
     else:
         tk = pylink.EyeLink('100.1.1.1')
 
+    port.writeRegister(6751, 0xFFFF)  # set FIO1 as output
+    port.writeRegister(FIO1, Triggers.CLEAR)  # start low
+
     dataFileName = f"{PART_ID}.EDF"
     tk.openDataFile(dataFileName)
     # add personalized data file header (preamble text)
-    tk.sendCommand(f"add_file_preamble_text 'Inspection Time EyeTracking EXP PART_ID: {PART_ID}'")
-
+    tk.sendCommand(
+        f"add_file_preamble_text 'Inspection Time EyeTracking EXP PART_ID: {PART_ID}'")
 
     # === Scene init ===
     # we need to set monitor parameters to use the different PsychoPy screen "units"
     mon = monitors.Monitor('myMonitor', width=53.0, distance=100.0)
     mon.setSizePix(SCREEN_RES)
-    win = visual.Window(SCREEN_RES, fullscr=(not DEBUG), monitor=mon, color='black', winType='pyglet', units='pix', screen=0, allowStencil=True)
+    win = visual.Window(SCREEN_RES, fullscr=(not DEBUG), monitor=mon, color='black',
+                        winType='pyglet', units='pix', screen=0, allowStencil=True)
     genv = EyeLinkCoreGraphicsPsychoPy(tk, win)
 
     # set background and foreground colors, (-1,-1,-1)=black, (1,1,1)=white
-    genv.backgroundColor = (-1,-1,-1)
-    genv.foregroundColor = (1,1,1)
+    genv.backgroundColor = (-1, -1, -1)
+    genv.foregroundColor = (1, 1, 1)
     genv.enableBeep = True
     genv.targetSize = 32
     genv.calTarget = 'circle'
@@ -128,7 +150,8 @@ def main():
     pylink.pumpDelay(100)
 
     # see Eyelink Installation Guide, Section 8.4: Customizing Your PHYSICAL.INI Settings
-    tk.sendCommand("screen_pixel_coords = 0 0 %d %d" % (scnWidth-1, scnHeight-1))
+    tk.sendCommand("screen_pixel_coords = 0 0 %d %d" %
+                   (scnWidth-1, scnHeight-1))
     # save screen resolution in EDF data, so Data Viewer can correctly load experimental graphics
     tk.sendMessage("DISPLAY_COORDS = 0 0 %d %d" % (scnWidth-1, scnHeight-1))
     # sampling rate, 250, 500, 1000, or 2000; this command is not supported for EyeLInk II/I trackers
@@ -151,12 +174,16 @@ def main():
         software_ver = float(tvstr.split()[-1])
 
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
-    logging.LogFile(join('.', 'results', 'log', f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"), level=logging.INFO)  # errors logging
+    logging.LogFile(join('.', 'results', 'log',
+                         f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"), level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES))
-    pos_feedb = visual.TextStim(win, text=u'Poprawna odpowied\u017A', color='grey', height=40)
-    neg_feedb = visual.TextStim(win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
-    no_feedb = visual.TextStim(win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
+    pos_feedb = visual.TextStim(
+        win, text=u'Poprawna odpowied\u017A', color='grey', height=40)
+    neg_feedb = visual.TextStim(
+        win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
+    no_feedb = visual.TextStim(
+        win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
     show_info(win, join('.', 'messages', 'hello.txt'))
 
     # sample and event data saved in EDF data file
@@ -186,13 +213,16 @@ def main():
     event.waitKeys()
     tk.doTrackerSetup()
 
-
-    for proc_version in ['SQUARES','CIRCLES']:
-        left_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_LEFT.bmp'))
-        right_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_RIGHT.bmp'))
-        mask_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_MASK.bmp'))
+    for proc_version in ['SQUARES', 'CIRCLES']:
+        left_stim = visual.ImageStim(win, image=join(
+            '.', 'stims', f'{proc_version}_LEFT.bmp'))
+        right_stim = visual.ImageStim(win, image=join(
+            '.', 'stims', f'{proc_version}_RIGHT.bmp'))
+        mask_stim = visual.ImageStim(win, image=join(
+            '.', 'stims', f'{proc_version}_MASK.bmp'))
         # fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
-        fix_stim = visual.ImageStim(win, image=join('.', 'stims', 'PRE_STIMULI.bmp'))
+        fix_stim = visual.ImageStim(
+            win, image=join('.', 'stims', 'PRE_STIMULI.bmp'))
         arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=30,
                                       pos=(0, -200))
         if proc_version == 'SQUARES':
@@ -200,28 +230,31 @@ def main():
         elif proc_version == 'CIRCLES':
             question = u'Gdzie pojawi\u0142 si\u0119 WI\u0118KSZY okr\u0119g?'
         else:
-            raise NotImplementedError(f'Stimulus type: {proc_version} not implemented.')
+            raise NotImplementedError(
+                f'Stimulus type: {proc_version} not implemented.')
 
         question_text = visual.TextStim(win, text=question, color='grey', height=20,
-                                      pos=(0, -180))
+                                        pos=(0, -180))
 
         # === Load data, configure log ===
 
         response_clock = core.Clock()
-        conf = yaml.load(open(join('.', 'configs', f'{proc_version}_config.yaml')))
+        conf = yaml.load(
+            open(join('.', 'configs', f'{proc_version}_config.yaml')))
 
-
-        show_info(win, join('.', 'messages', f'{proc_version}_before_training.txt'))
+        show_info(win, join('.', 'messages',
+                            f'{proc_version}_before_training.txt'))
         # === Training ===
 
-        training = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+        training = NUpNDown(
+            start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
 
         old_rev_count_val = -1
         correct_trials = 0
         soas = []
         for idx, soa in enumerate(training):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                 question_text, response_clock, idx, tk)
+                                         question_text, response_clock, idx, tk)
             training.set_corr(corr)
             level, reversal, revs_count = map(int, training.get_jump_status())
             if reversal:
@@ -236,7 +269,7 @@ def main():
                 [PART_ID, idx, proc_version, 1, conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal,
                  rev_count_val, rt, rating])
 
-            ### FEEDBACK
+            # FEEDBACK
             if corr == 1:
                 feedb_msg = pos_feedb
                 correct_trials += 1
@@ -249,15 +282,14 @@ def main():
                 check_exit()
                 win.flip()
 
-
         # === experiment ===
-        soa = int(np.mean(soas[:int(0.6 * len(soas))])) 
+        soa = int(np.mean(soas[:int(0.6 * len(soas))]))
 
         show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
 
-        for idx in range(idx,conf['NO_TRIALS']+idx):
+        for idx in range(idx, conf['NO_TRIALS']+idx):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
-                                    question_text, response_clock, idx, tk)
+                                         question_text, response_clock, idx, tk)
             corr = int(corr)
             correct_trials += corr
             RESULTS.append(
@@ -265,7 +297,6 @@ def main():
                     '-', rt, rating])
 
     show_info(win, join('.', 'messages', 'end.txt'))
-
 
     # close the EDF data file and put the tracker in idle mode
     tk.setOfflineMode()
@@ -291,9 +322,10 @@ def main():
     logging.flush()
     core.quit()
     window.close()
+    port.close()
 
 
-def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,question_text, response_clock, trial_index, tk):
+def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label, question_text, response_clock, trial_index, tk):
     trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
@@ -306,9 +338,9 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     tk.sendMessage('TRIALID %d' % trial_index)
 
     # record_status_message : show some info on the Host PC - OPTIONAL
-    tk.sendCommand("record_status_message 'TRIAL: %d'" % trial_index) 
-    
-     # drift check
+    tk.sendCommand("record_status_message 'TRIAL: %d'" % trial_index)
+
+    # drift check
     # the doDriftCorrect() function requires target position in integers
     # the last two arguments: draw_target (1-default, 0-user draw the target then call this function)
     #                         allow_setup (1-press ESCAPE to recalibrate, 0-not allowed)
@@ -331,27 +363,45 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     eyeTracked = tk.eyeAvailable()
     if eyeTracked == 2:  # use right eye data if tracking binocularly
         eyeTracked = 1
+
     tk.sendMessage("trial_run")
-    win.callOnFlip(tk.sendMessage, "fixation")
-    for _ in range(config['FIXTIME']):  # Fixation hexagon
+    core.wait(0.02)
+
+    win.callOnFlip(tk.sendMessage, "trial_fixation")
+    win.callOnFlip(port.writeRegister, FIO1, Triggers.FIXATION)
+    for i in range(config['FIXTIME']):  # Fixation hexagon
+        if i == 2:
+            port.writeRegister(FIO1, Triggers.CLEAR)
         fix_stim.draw()
         win.flip()
         check_exit()
-    win.callOnFlip(tk.sendMessage, "stimuli")
-    for _ in range(soa):  # Stimulus presentation
+
+    win.callOnFlip(tk.sendMessage, "trial_stimuli")
+    win.callOnFlip(port.writeRegister, FIO1, Triggers.STIMULI)
+    for i in range(soa):  # Stimulus presentation
+        if i == 2:
+            port.writeRegister(FIO1, Triggers.CLEAR)
         stim.draw()
         win.flip()
         check_exit()
-    win.callOnFlip(tk.sendMessage, "mask")
-    for _ in range(config['MTIME']):  # Mask presentation
+    
+    win.callOnFlip(tk.sendMessage, "trial_mask")
+    win.callOnFlip(port.writeRegister, FIO1, Triggers.MASK)
+    for i in range(config['MTIME']):  # Mask presentation
+        if i == 2:
+            port.writeRegister(FIO1, Triggers.CLEAR)
         mask_stim.draw()
         win.flip()
         check_exit()
+
     corr = False  # Used if timeout
     win.callOnFlip(response_clock.reset)
+    win.callOnFlip(tk.sendMessage, "trial_reaction")
+    win.callOnFlip(port.writeRegister, FIO1, Triggers.REACTION)
     event.clearEvents()
-    win.callOnFlip(tk.sendMessage, "reaction")
-    for _ in range(config['RTIME']):  # Time for reaction
+    for i in range(config['RTIME']):  # Time for reaction
+        if i == 2:
+            port.writeRegister(FIO1, Triggers.CLEAR)
         arrow_label.draw()
         question_text.draw()
         win.flip()
@@ -362,9 +412,11 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
             break
         check_exit()
     # Rating Scale
-    
-    tk.sendMessage('trial_finished')
 
+    tk.sendMessage('trial_finished')
+    port.writeRegister(FIO1, Triggers.FINISHED)
+    core.wait(0.02)
+    port.writeRegister(FIO1, Triggers.CLEAR)
     # clear the screen
     win.flip()
     tk.sendMessage('blank_screen')
@@ -376,15 +428,15 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
     # send over the standard 'TRIAL_RESULT' message to mark the end of trial
     tk.sendMessage('TRIAL_RESULT 0')
 
-    ratingScale = visual.RatingScale(win, size = 0.8, noMouse=True, 
-    markerStart = 2, stretch= 1.4, scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi", acceptPreText= 'Wybierz',choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
+    ratingScale = visual.RatingScale(win, size=0.8, noMouse=True,
+                                     markerStart=2, stretch=1.4, scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi", acceptPreText='Wybierz', choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
     while ratingScale.noResponse:
         ratingScale.draw()
         win.flip()
     rating = ratingScale.getRating()
     win.flip()
     # break + jitter
-    wait_time_in_secs = 1 + random.choice(range(0, 120))/ 60.0
+    wait_time_in_secs = 1 + random.choice(range(0, 120)) / 60.0
     core.wait(wait_time_in_secs)
     return corr, rt, rating
 
