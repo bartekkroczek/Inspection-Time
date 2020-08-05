@@ -21,7 +21,7 @@ FIO1 = 6701  # the address of line FIO1 (EEG)
 
 
 # GLOBALS
-DEBUG = True
+DEBUG = False
 TEXT_SIZE = 30
 VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
