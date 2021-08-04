@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
-import atexit
-import codecs
-import csv
-import random
-from os.path import join
+ import  atexit
+ import  codecs
+ import     csv
+ import  random
+   from os.path import join
 
 import numpy as np
 import yaml
@@ -25,6 +25,13 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
     LEFT = 1
     RIGHT = 2
 
+class TriggerTypes(object):
+    CLEAR = 0x00
+    REST_START = 0x01
+    REST_END = 0x02
+    FIX_END = 0x04
+    TRIAL_START = 0x08
+    TRIAL_ANS = 0x10
 
 # @atexit.register
 def save_beh_results():
