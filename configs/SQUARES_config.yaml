@@ -1,9 +1,11 @@
 # All values in no. of frames.
-NO_TRIALS: 40
+NO_TRIALS: 90
 START_SOA: 6
-FIXTIME: 75 # Fixation cross time
+TRAIN_FIX_TIME: 20
+EXP_FIX_TIME: 480
 MTIME: 17 # Mask presentation time
-RTIME: 240 # Maximal response time
-MAX_REVS: 10 # No of reversals in adaptive alg.
+RESTTIME: 240
+RTIME: 240  # Maximal response time
+MAX_REVS: 8 # No of reversals in adaptive alg.
 STEP_UP: 3
 STEP_DOWN: 1

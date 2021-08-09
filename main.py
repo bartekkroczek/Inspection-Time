@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
- import  atexit
- import  codecs
- import     csv
- import  random
-   from os.path import join
+import  atexit
+import  codecs
+import     csv
+import  random
+from os.path import join
 
 import numpy as np
+import parallel
 import yaml
 from psychopy import visual, event, logging, gui, core
 from Adaptives.NUpNDown import NUpNDown
@@ -15,6 +16,7 @@ from Adaptives.NUpNDown import NUpNDown
 TEXT_SIZE = 30
 VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
+PORT = parallel.Parallel()
 
 RESULTS = list()
 RESULTS.append(['PART_ID', 'Trial', 'Stimuli', 'Training', 'FIXTIME', 'MTIME', 'Correct', 'SOA',
@@ -29,7 +31,7 @@ class TriggerTypes(object):
     CLEAR = 0x00
     REST_START = 0x01
     REST_END = 0x02
-    FIX_END = 0x04
+    FIX_START = 0x04
     TRIAL_START = 0x08
     TRIAL_ANS = 0x10
 
@@ -143,8 +145,9 @@ def main():
         old_rev_count_val = -1
         correct_trials = 0
         soas = []
+        fix_time = conf['TRAIN_FIX_TIME']
         for idx, soa in enumerate(training):
-            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
+            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label,
                                  question_text, response_clock)
             training.set_corr(corr)
             level, reversal, revs_count = map(int, training.get_jump_status())
@@ -157,7 +160,7 @@ def main():
                 rev_count_val = '-'
 
             RESULTS.append(
-                [PART_ID, idx, proc_version, 1, conf['FIXTIME'], conf['MTIME'], int(corr), soa, level, reversal,
+                [PART_ID, idx, proc_version, 1, fix_time, conf['MTIME'], int(corr), soa, level, reversal,
                  rev_count_val, rt, rating])
 
             ### FEEDBACK
@@ -172,24 +175,41 @@ def main():
                 feedb_msg.draw()
                 check_exit()
                 win.flip()
-
+            # break + jitter
+            wait_time_in_secs = 1 + random.choice(range(0, 60))/ 60.0
+            core.wait(wait_time_in_secs)
 
         # === experiment ===
         soa = int(np.mean(soas[:int(0.6 * len(soas))])) 
         experiment = [soa] * conf['NO_TRIALS']
 
+        fix_time = conf['EXP_FIX_TIME']
         show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
-
         for idx in range(idx,conf['NO_TRIALS']+idx):
-            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,
+            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label,
                                     question_text, response_clock)
             corr = int(corr)
             correct_trials += corr
             RESULTS.append(
-                [PART_ID, idx, proc_version, 0, conf['FIXTIME'], conf['MTIME'], corr, soa, '-', '-',
+                [PART_ID, idx, proc_version, 0, fix_time, conf['MTIME'], corr, soa, '-', '-',
                     '-', rt, rating])
+            # break + jitter
+            wait_time_in_secs = 1 + random.choice(range(0, 60))/ 60.0
+            core.wait(wait_time_in_secs)
 
-
+    
+    show_info(win, join('.', 'messages', 'iaf.txt'))
+    fix_cross = visual.TextStim(win, text=u"+", color='grey', height=60, pos=(0, 0))
+    fix_cross.draw()
+    win.callOnFlip(PORT.setData, TriggerTypes.REST_START)
+    win.flip()
+    core.wait(0.04)
+    PORT.setData(TriggerTypes.CLEAR)
+    core.wait(conf['RESTTIME'])
+    win.flip()
+    PORT.setData(TriggerTypes.REST_END)
+    core.wait(0.04)
+    PORT.setData(TriggerTypes.CLEAR)
     # === Cleaning time ===
     save_beh_results()
     logging.flush()
@@ -197,18 +217,25 @@ def main():
     win.close()
 
 
-def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arrow_label,question_text, response_clock):
+def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label,question_text, response_clock):
     trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
     rt = -1.0
-    for _ in range(config['FIXTIME']):  # Fixation octagon
+    win.callOnFlip(PORT.setData, TriggerTypes.FIX_START)
+
+    for i in range(fix_time):  # Fixation octagon
         fix_stim.draw()
         win.flip()
+        if i == 1:
+            win.callOnFlip(PORT.setData, TriggerTypes.CLEAR)
         check_exit()
-    for _ in range(soa):  # Stimulus presentation
+    win.callOnFlip(PORT.setData, TriggerTypes.TRIAL_START)
+    for i in range(soa):  # Stimulus presentation
         stim.draw()
         win.flip()
+        if i == 1:
+            win.callOnFlip(PORT.setData, TriggerTypes.CLEAR)
         check_exit()
     for _ in range(config['MTIME']):  # Mask presentation
         mask_stim.draw()
@@ -225,6 +252,9 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
         if keys:
             corr = True if keys[0] == stim_name else False
             rt = response_clock.getTime()
+            PORT.setData(TriggerTypes.TRIAL_ANS)
+            core.wait(0.04)
+            PORT.setData(TriggerTypes.CLEAR)
             break
         check_exit()
     # Rating Scale
@@ -236,9 +266,6 @@ def run_trial(config, fix_stim, left_stim, mask_stim, right_stim, soa, win, arro
         win.flip()
     rating = ratingScale.getRating()
     win.flip()
-    # break + jitter
-    wait_time_in_secs = 1 + random.choice(range(0, 120))/ 60.0
-    core.wait(wait_time_in_secs)
     return corr, rt, rating
 
 
