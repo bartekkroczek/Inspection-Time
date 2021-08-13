@@ -1,7 +1,7 @@
 ﻿
-Teraz nastąpi kolejne zadanie, które będzie wyglądać analogicznie jak  poprzednie.
+Teraz nastąpi kolejne zadanie, które będzie wyglądać analogicznie jak poprzednie.
 
-W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
+W tym zadaniu będziesz decydować, po której stronie, lewej bądź prawej,
 pojawił się WIĘKSZY okręg.
 
 
