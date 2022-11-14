@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
-import  atexit
-import  codecs
-import     csv
-import  random
+import atexit
+import codecs
+import csv
+import random
+from datetime import datetime
 from os.path import join
 
-import numpy as np
-import parallel
 import yaml
 from psychopy import visual, event, logging, gui, core
+
 from Adaptives.NUpNDown import NUpNDown
 
 # GLOBALS
 TEXT_SIZE = 30
 VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
-PORT = parallel.Parallel()
 
 RESULTS = list()
 RESULTS.append(['PART_ID', 'Trial', 'Stimuli', 'Training', 'FIXTIME', 'MTIME', 'Correct', 'SOA',
@@ -27,17 +26,12 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
     LEFT = 1
     RIGHT = 2
 
-class TriggerTypes(object):
-    CLEAR = 0x00
-    REST_START = 0x01
-    REST_END = 0x02
-    FIX_START = 0x04
-    TRIAL_START = 0x08
-    TRIAL_ANS = 0x10
 
-# @atexit.register
-def save_beh_results():
-    with open(join('results', PART_ID + "_" + str(random.choice(range(100, 1000))) + '_beh.csv'), 'w') as beh_file:
+@atexit.register
+def save_beh_results() -> None:
+    now = datetime.now()
+    path = join('results', f'{PART_ID}_{now.strftime("%d-%m-%Y_%H-%M-%S")}_beh.csv')
+    with open(path, 'w', encoding='utf-8') as beh_file:
         beh_writer = csv.writer(beh_file)
         beh_writer.writerows(RESULTS)
     logging.flush()
@@ -105,15 +99,15 @@ def main():
     win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
     PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
-    logging.LogFile(join('.', 'results',  f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"), level=logging.INFO)  # errors logging
+    logging.LogFile(join('.', 'results', f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"),
+                    level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES))
     pos_feedb = visual.TextStim(win, text=u'Poprawna odpowied\u017A', color='grey', height=40)
     neg_feedb = visual.TextStim(win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
     no_feedb = visual.TextStim(win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
-    show_info(win, join('.', 'messages', 'hello.txt'))
 
-    for proc_version in ['SQUARES','CIRCLES']:
+    for proc_version in ['SQUARES', 'CIRCLES']:
         left_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_LEFT.bmp'))
         right_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_MASK.bmp'))
@@ -129,28 +123,53 @@ def main():
             raise NotImplementedError(f'Stimulus type: {proc_version} not implemented.')
 
         question_text = visual.TextStim(win, text=question, color='grey', height=20,
-                                      pos=(0, -180))
+                                        pos=(0, -180))
 
         # === Load data, configure log ===
 
         response_clock = core.Clock()
-        conf = yaml.load(open(join('.', 'configs', f'{proc_version}_config.yaml')))
+        conf = yaml.load(open(join('.', 'configs', f'{proc_version}_config.yaml')), Loader=yaml.SafeLoader)
 
-
-        show_info(win, join('.', 'messages', f'{proc_version}_before_training.txt'))
         # === Training ===
 
-        training = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+        show_info(win, join('.', 'messages', f'{proc_version}_before_training.txt'))
+        fix_time = conf['FIX_TIME']
+        assert len(conf['TRAINING_TRIALS']) == len(conf["TRAINING_SOAS"]), "Conf error, training list incorrect"
+        idx = 0
+        for no_trials, soa in zip(conf['TRAINING_TRIALS'], conf['TRAINING_SOAS']):
+            for idx in range(idx + 1, no_trials + idx + 1):
+                corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win,
+                                             arrow_label, question_text, response_clock)
+                RESULTS.append(
+                    [PART_ID, idx, proc_version, 'training', fix_time, conf['MTIME'], corr, soa, '-', '-',
+                     '-', rt, rating])
+                # FEEDBACK
+                if corr == 1:
+                    feedb_msg = pos_feedb
+                elif corr == 0:
+                    feedb_msg = neg_feedb
+                else:
+                    feedb_msg = no_feedb
+                for _ in range(30):
+                    feedb_msg.draw()
+                    check_exit()
+                    win.flip()
+                win.flip()
+                # break + jitter
+                wait_time_in_secs: float = random.choice(range(*conf['REST_TIME_RANGE'])) / 60.0
+                core.wait(wait_time_in_secs)
 
-        old_rev_count_val = -1
-        correct_trials = 0
-        soas = []
-        fix_time = conf['TRAIN_FIX_TIME']
-        for idx, soa in enumerate(training):
-            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label,
-                                 question_text, response_clock)
-            training.set_corr(corr)
-            level, reversal, revs_count = map(int, training.get_jump_status())
+        # === Experiment ===
+
+        experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+        old_rev_count_val: int = -1
+        soas: list = list()
+        show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
+        for idx, soa in enumerate(experiment, 1):
+            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win,
+                                         arrow_label, question_text, response_clock)
+            experiment.set_corr(corr)
+            level, reversal, revs_count = map(int, experiment.get_jump_status())
             if reversal:
                 soas.append(soa)
             if old_rev_count_val != revs_count:
@@ -158,58 +177,13 @@ def main():
                 rev_count_val = revs_count
             else:
                 rev_count_val = '-'
-
             RESULTS.append(
-                [PART_ID, idx, proc_version, 1, fix_time, conf['MTIME'], int(corr), soa, level, reversal,
-                 rev_count_val, rt, rating])
-
-            ### FEEDBACK
-            if corr == 1:
-                feedb_msg = pos_feedb
-                correct_trials += 1
-            elif corr == 0:
-                feedb_msg = neg_feedb
-            else:
-                feedb_msg = no_feedb
-            for _ in range(30):
-                feedb_msg.draw()
-                check_exit()
-                win.flip()
+                [PART_ID, idx, proc_version, "exp", fix_time, conf['MTIME'], corr, soa, level, reversal, rev_count_val,
+                 rt, rating])
             # break + jitter
-            wait_time_in_secs = 1 + random.choice(range(0, 60))/ 60.0
+            wait_time_in_secs: float = random.choice(range(*conf['REST_TIME_RANGE'])) / 60.0
             core.wait(wait_time_in_secs)
 
-        # === experiment ===
-        soa = int(np.mean(soas[:int(0.6 * len(soas))])) 
-        experiment = [soa] * conf['NO_TRIALS']
-
-        fix_time = conf['EXP_FIX_TIME']
-        show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
-        for idx in range(idx,conf['NO_TRIALS']+idx):
-            corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label,
-                                    question_text, response_clock)
-            corr = int(corr)
-            correct_trials += corr
-            RESULTS.append(
-                [PART_ID, idx, proc_version, 0, fix_time, conf['MTIME'], corr, soa, '-', '-',
-                    '-', rt, rating])
-            # break + jitter
-            wait_time_in_secs = 1 + random.choice(range(0, 60))/ 60.0
-            core.wait(wait_time_in_secs)
-
-    
-    show_info(win, join('.', 'messages', 'iaf.txt'))
-    fix_cross = visual.TextStim(win, text=u"+", color='grey', height=60, pos=(0, 0))
-    fix_cross.draw()
-    win.callOnFlip(PORT.setData, TriggerTypes.REST_START)
-    win.flip()
-    core.wait(0.04)
-    PORT.setData(TriggerTypes.CLEAR)
-    core.wait(conf['RESTTIME'])
-    win.flip()
-    PORT.setData(TriggerTypes.REST_END)
-    core.wait(0.04)
-    PORT.setData(TriggerTypes.CLEAR)
     # === Cleaning time ===
     save_beh_results()
     logging.flush()
@@ -217,31 +191,26 @@ def main():
     win.close()
 
 
-def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label,question_text, response_clock):
+def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win, arrow_label, question_text,
+              response_clock):
     trial_type = random.choice([CorrectStim.LEFT, CorrectStim.RIGHT])
     stim = left_stim if trial_type == CorrectStim.LEFT else right_stim
     stim_name = 'left' if trial_type == CorrectStim.LEFT else 'right'
     rt = -1.0
-    win.callOnFlip(PORT.setData, TriggerTypes.FIX_START)
 
     for i in range(fix_time):  # Fixation octagon
         fix_stim.draw()
         win.flip()
-        if i == 1:
-            win.callOnFlip(PORT.setData, TriggerTypes.CLEAR)
         check_exit()
-    win.callOnFlip(PORT.setData, TriggerTypes.TRIAL_START)
     for i in range(soa):  # Stimulus presentation
         stim.draw()
         win.flip()
-        if i == 1:
-            win.callOnFlip(PORT.setData, TriggerTypes.CLEAR)
         check_exit()
     for _ in range(config['MTIME']):  # Mask presentation
         mask_stim.draw()
         win.flip()
         check_exit()
-    corr = False  # Used if timeout
+    corr = -1  # Used if timeout
     win.callOnFlip(response_clock.reset)
     event.clearEvents()
     for _ in range(config['RTIME']):  # Time for reaction
@@ -252,19 +221,19 @@ def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa,
         if keys:
             corr = True if keys[0] == stim_name else False
             rt = response_clock.getTime()
-            PORT.setData(TriggerTypes.TRIAL_ANS)
-            core.wait(0.04)
-            PORT.setData(TriggerTypes.CLEAR)
             break
         check_exit()
     # Rating Scale
-    
-    ratingScale = visual.RatingScale(win, size = 0.8, noMouse=True, 
-    markerStart = 2, stretch= 1.4, scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi", acceptPreText= 'Wybierz',choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
-    while ratingScale.noResponse:
-        ratingScale.draw()
-        win.flip()
-    rating = ratingScale.getRating()
+    rating = '-'
+    # ratingScale = visual.RatingScale(win, size=0.8, noMouse=True,
+    #                                  markerStart=2, stretch=1.4,
+    #                                  scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi",
+    #                                  acceptPreText='Wybierz',
+    #                                  choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
+    # while ratingScale.noResponse:
+    #     ratingScale.draw()
+    #     win.flip()
+    # rating = ratingScale.getRating()
     win.flip()
     return corr, rt, rating
 
