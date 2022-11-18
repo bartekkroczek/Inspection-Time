@@ -1,21 +1,18 @@
-﻿W tym zadaniu będziesz decydował, po której stronie, lewej bądź prawej,
+﻿W tym zadaniu będziesz decydował, po której ze stron, lewej bądź prawej,
 pojawił się OBRÓCONY KWADRAT (jak kolor Karo na kartach do gry), drugi kwadrat nie będzie obrócony.
 
 
 Zadanie będzie wyglądać następująco:
-Najpierw na ekranie pojawią się dwa sześciokaty - skup na nich wzrok.
-Po chwili sześciokąty znikną, a na ekranie pojawią się dwa kwadraty (w tym jeden odwrócony).
+Najpierw na środku ekranu pojawi się krzyżyk - skup na nim wzrok.
+Po chwili krzyżyk zniknie, a na ekranie pojawią się dwa kwadraty (w tym jeden odwrócony).
 Zawsze jeden z nich, losowo po lewej lub prawej stronie, będzie odwrócony.
 Następnie oba kwadraty zostaną zasłonięte przez maskujący wzór.
 
 UWAGA! Łatwo się pomylić i wykonywać zadanie na odwrót, ZAPAMIĘTAJ:
 
-Naciśnij lewą strzałkę jeśli to po lewej stronie wyświetlił się OBRÓCONY kwadrat
-lub prawą strzałkę jeśli to po prawej stronie wyświetlił się OBRÓCONY kwadrat.
+Naciśnij lewą strzałkę, jeśli to po lewej stronie wyświetlił się OBRÓCONY kwadrat
+lub prawą strzałkę, jeśli to po prawej stronie wyświetlił się OBRÓCONY kwadrat.
 
-Na końcu zostaniesz zapytany, na ile jesteś pewny udzielonej odpowiedzi, 
-wyboru dokonaj strzałkami i potwierdź go naciskając enter.
+Pamiętaj, w tym zadaniu liczy się poprawność, więc się skoncentruj.
 
-Pamiętaj w tym zadaniu liczy się Twoja poprawność.
-
-Nacisnij SPACJĘ by przejść do treningu.
+Naciśnij SPACJĘ, by przejść do treningu.

@@ -1,13 +1,12 @@
-﻿
-Teraz nastąpi kolejne zadanie, które będzie wyglądać analogicznie jak poprzednie.
+﻿Teraz nastąpi kolejne zadanie, które będzie wyglądać analogicznie jak poprzednie.
 
-W tym zadaniu będziesz decydować, po której stronie, lewej bądź prawej,
-pojawił się WIĘKSZY okręg.
+W tym zadaniu będziesz decydować, po której ze stron, lewej bądź prawej,
+pojawiło się WIĘKSZE koło.
 
 
 ZAPAMIĘTAJ:
 
-Naciśnij lewą strzałkę jeśli to po lewej stronie wyświetlił się WIĘKSZY okręg
-lub prawą strzałkę jeśli to po prawej stronie wyświetlił się WIĘKSZY okręg.
+Naciśnij lewą strzałkę, jeśli to po lewej stronie wyświetliło się WIĘKSZE koło
+lub prawą strzałkę, jeśli to po prawej stronie wyświetliło się WIĘKSZE koło.
 
-Nacisnij SPACJĘ by przejść do treningu
+Naciśnij SPACJĘ, by przejść do treningu.

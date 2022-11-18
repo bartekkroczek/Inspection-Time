@@ -1,8 +1,7 @@
 ﻿Ukończyłeś/aś trening
 
-Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawił się WIĘKSZY okręg.
+Pamiętaj, Twoim zadaniem jest zdecydować, po której stronie pojawiło się WIĘKSZE koło.
 
-Nawet jesli okregi nie beda rozpoznawalne,
- staraj się udzielać poprawnych odpowiedzi!
+Liczy się poprawność udzielonej odpowiedzi, więc staraj się utrzymać koncentracje.
 
-Nacisnij SPACJĘ by rozpocząć
+Naciśnij SPACJĘ, by rozpocząć.

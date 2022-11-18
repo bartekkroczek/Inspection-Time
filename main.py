@@ -111,8 +111,8 @@ def main():
         left_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_LEFT.bmp'))
         right_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_MASK.bmp'))
-        # fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
-        fix_stim = visual.ImageStim(win, image=join('.', 'stims', 'PRE_STIMULI.bmp'))
+        fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
+        # fix_stim = visual.ImageStim(win, image=join('.', 'stims', 'PRE_STIMULI.bmp'))
         arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=30,
                                       pos=(0, -200))
         if proc_version == 'SQUARES':
@@ -185,7 +185,6 @@ def main():
             core.wait(wait_time_in_secs)
 
     # === Cleaning time ===
-    save_beh_results()
     logging.flush()
     show_info(win, join('.', 'messages', 'end.txt'))
     win.close()

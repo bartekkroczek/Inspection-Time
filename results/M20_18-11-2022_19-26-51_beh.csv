@@ -1,0 +1,3 @@
+PART_ID,Trial,Stimuli,Training,FIXTIME,MTIME,Correct,SOA,Level,Reversal,Reversal_count,Latency,Rating
+M20,1,SQUARES,training,45,17,False,12,-,-,-,0.1172179999994114,-
+M20,2,SQUARES,training,45,17,True,12,-,-,-,0.31701020000036806,-

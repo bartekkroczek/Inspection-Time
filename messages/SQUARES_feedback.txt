@@ -1,9 +1,8 @@
 ﻿Brawo, ukończyłeś/aś trening
 
 
-Pamiętaj, Twoim zadaniem jest zdecydować po której stronie pojawił się OBRÓCONY kwadrat.
+Pamiętaj, Twoim zadaniem jest zdecydować, po której ze stron pojawił się OBRÓCONY kwadrat.
 
-Nawet jesli kwadraty nie beda rozpoznawalne,
- staraj się udzielać poprawnych odpowiedzi!
+Liczy się poprawność udzielonej odpowiedzi, więc staraj się utrzymać koncentracje.
 
-Nacisnij SPACJĘ by rozpocząć
+Naciśnij SPACJĘ, by rozpocząć.

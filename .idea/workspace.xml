@@ -4,74 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81c20f93-e351-40bf-a248-2c7493d60268" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Inspection-Time.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/M20_14-11-2022_19-03-25_beh.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/M20_14-11-2022_19-30-04_beh.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/M20_14-11-2022_19-30-09_beh.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/M20_309.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/M20_347.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/test1M20_14-11-2022_19-24-34_beh.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/test1M20_14-11-2022_19-24-36_beh.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/test1M20_920.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/results/testM20_275.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/markdown-navigator.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/markdown-navigator/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/preferred-vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" />
+    <list default="true" id="81c20f93-e351-40bf-a248-2c7493d60268" name="Changes" comment="Beh version prepared.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configs/CIRCLES_config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/CIRCLES_config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/configs/SQUARES_config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/SQUARES_config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/0M20_755.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/0M20_792.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/1M21_309_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/1M21_418.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/2K22_420.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/2K22_966_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/3K25_560_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/3K25_839.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/4K28_223_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/4K28_361.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/5K23_621_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/5K23_857.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/6M18_359.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/6M18_744_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/6M18_969.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/7M21_406_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/7M21_408.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/7M21_657.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/8K22_270.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/8K22_617_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/8K22_893.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/9K28_568_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/9K28_962.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_127.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_135.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_213.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_224.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_249.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_313.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_330.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_354.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_385_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_388.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_405.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_450_beh.csv" beforeDir="false" afterPath="$PROJECT_DIR$/results/testM20_14-11-2022_19-21-51_beh.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_501.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_533.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_586.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_597_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_728.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_783.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/M20_828.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/flapM20_432.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/olciaM20_848.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/videoM20_585_beh.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/results/videoM20_706.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/CIRCLES_before_training.txt" beforeDir="false" afterPath="$PROJECT_DIR$/messages/CIRCLES_before_training.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/CIRCLES_feedback.txt" beforeDir="false" afterPath="$PROJECT_DIR$/messages/CIRCLES_feedback.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/SQUARES_before_training.txt" beforeDir="false" afterPath="$PROJECT_DIR$/messages/SQUARES_before_training.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/SQUARES_feedback.txt" beforeDir="false" afterPath="$PROJECT_DIR$/messages/SQUARES_feedback.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/end.txt" beforeDir="false" afterPath="$PROJECT_DIR$/messages/end.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/hello.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/messages/iaf.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/M20_14-11-2022_19-03-25_beh.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/M20_14-11-2022_19-30-04_beh.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/M20_14-11-2022_19-30-09_beh.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/M20_309.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/M20_347.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/test1M20_14-11-2022_19-24-34_beh.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/test1M20_14-11-2022_19-24-36_beh.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/test1M20_920.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/testM20_14-11-2022_19-21-51_beh.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/testM20_275.log" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -156,8 +110,19 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1668447674695</updated>
-      <workItem from="1668447676109" duration="3199000" />
+      <workItem from="1668447676109" duration="3233000" />
+      <workItem from="1668451117288" duration="4000" />
+      <workItem from="1668677041702" duration="9000" />
+      <workItem from="1668795623137" duration="2270000" />
     </task>
+    <task id="LOCAL-00001" summary="Beh version prepared.">
+      <created>1668450926940</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1668450926940</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -174,7 +139,11 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Beh version prepared." />
+    <option name="LAST_COMMIT_MESSAGE" value="Beh version prepared." />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Inspection_Time$main.coverage" NAME="main Coverage Results" MODIFIED="1668450420375" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Inspection_Time$main.coverage" NAME="main Coverage Results" MODIFIED="1668797934336" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
