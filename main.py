@@ -210,7 +210,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa,
         mask_stim.draw()
         win.flip()
         check_exit()
-    corr = -1  # Used if timeout
+    corr: bool = False  # Used if timeout
     win.callOnFlip(response_clock.reset)
     event.clearEvents()
     for _ in range(config['RTIME']):  # Time for reaction
