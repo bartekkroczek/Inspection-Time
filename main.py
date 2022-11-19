@@ -161,7 +161,8 @@ def main():
 
         # === Experiment ===
 
-        experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'])
+        experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'], n_up=conf['N_UP'],
+                              n_down=conf['N_DOWN'])
         old_rev_count_val: int = -1
         soas: list = list()
         show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))

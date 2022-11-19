@@ -9,5 +9,5 @@ RTIME: 240 # Maximal response time
 RESTTIME: 240
 REST_TIME_RANGE: [ 45, 60 ]
 MAX_REVS: 10 # No of reversals in adaptive alg.
-STEP_UP: 2
-STEP_DOWN: 1
+N_UP: 2
+N_DOWN: 1
