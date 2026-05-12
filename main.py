@@ -147,7 +147,9 @@ def main():
 
         # On-screen text stimuli; sizes and offsets come from the YAML config.
         fix_stim = visual.TextStim(win, text='+', height=conf['FIX_HEIGHT'], color='grey')
-        arrow_label = visual.TextStim(win, text='←       →', color='grey',
+        # Explicit font: the default sans-serif lacks the Arrows Unicode block
+        # on some Linux installs and the glyphs would render as tofu boxes.
+        arrow_label = visual.TextStim(win, text='←       →', color='grey', font='DejaVu Sans',
                                       height=conf['ARROW_HEIGHT'], pos=(0, conf['ARROW_POS_Y']))
         if proc_version == 'SQUARES':
             question = 'Gdzie pojawił się OBROCONY kwadrat?'
