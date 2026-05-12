@@ -139,6 +139,12 @@ current values and per-field documentation.
 | `REST_TIME_RANGE` | `[min, max]` frames for the jittered ITI. A random integer from this range is divided by 60 to get seconds. |
 | `MAX_REVS`        | Staircase stops after this many reversals. Total trials is **variable**. |
 | `N_UP` / `N_DOWN` | Staircase rule. `N_UP` correct in a row → harder; `N_DOWN` wrong in a row → easier. With `N_DOWN = 1` the rule converges on the SOA where the participant is correct with probability *p* satisfying *p^N_UP = 0.5* — so `2/1` ≈ 71%, `3/1` ≈ 79%. |
+| `MSG_TEXT_SIZE`   | Font height (px) for the on-screen instruction messages (`{cond}_before_training.txt` and `{cond}_feedback.txt`). |
+| `FEEDBACK_HEIGHT` | Font height (px) for the per-trial feedback message ("Correct" / "Wrong" / "No response"). |
+| `FEEDBACK_DURATION` | How long the per-trial feedback is shown, in **frames** (so ~500 ms at 60 Hz for the default of 30). |
+| `FIX_HEIGHT`      | Fixation `+` height (px). |
+| `ARROW_HEIGHT` / `ARROW_POS_Y`     | Height and vertical offset of the response-arrow row (`←   →`). Y is in pixels from screen centre (negative = below). |
+| `QUESTION_HEIGHT` / `QUESTION_POS_Y` | Height and vertical offset of the question text shown during the response window. |
 
 ### Running only one condition
 

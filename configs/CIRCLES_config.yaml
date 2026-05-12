@@ -23,6 +23,16 @@ TRAINING_SOAS:   [ 20, 10 ]   # SOA per block: ~333 ms, then ~167 ms
 # --- Adaptive (experimental) phase -------------------------------------------
 START_SOA: 10                 # initial SOA for the staircase (~167 ms)
 
+# --- UI ----------------------------------------------------------------------
+MSG_TEXT_SIZE:     20         # font height (px) for instruction screens
+FEEDBACK_HEIGHT:   40         # font height (px) for the per-trial feedback message
+FEEDBACK_DURATION: 30         # how long the feedback is shown (frames)
+FIX_HEIGHT:        100        # fixation '+' height (px)
+ARROW_HEIGHT:      30         # response-arrow row height (px)
+ARROW_POS_Y:       -200       # response-arrow vertical offset (px; 0 = screen centre)
+QUESTION_HEIGHT:   20         # question-text height (px)
+QUESTION_POS_Y:    -180       # question vertical offset (px; 0 = screen centre)
+
 # --- Per-trial timing --------------------------------------------------------
 FIX_TIME: 45                  # fixation cross duration  (~750 ms)
 MTIME:    17                  # mask presentation time   (~283 ms)

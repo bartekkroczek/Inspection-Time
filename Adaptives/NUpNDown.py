@@ -4,21 +4,30 @@ from .AbstractAdaptive import AbstractAdaptive
 class NUpNDown(AbstractAdaptive):
     def __init__(self, n_up=3, n_down=1, max_revs=8, start_val=10, step_up=1, step_down=1):
         """
-        This class will be returning some value in any iteration.
-        At start it will be **start_val**.
-        After **n_up** correct answers (set_corr(True))
-        value will be increased by **step**.
-        Analogically, after **n_down** * (set_corr(False)) value will be
-        decreased by **step**.
-        If swipe (change between series of up's of series of down's)
-        will be detected **max_revs** times, algorithm will be terminated.
+        Transformed up-down staircase. On each iteration the class yields
+        **curr_val**, starting from **start_val**. The caller reports whether
+        the participant was correct via set_corr(bool); the value then changes
+        according to:
 
-        * :param **n_up**: No of set_corr(True) before inc value.
-        * :param **n_down**: No of set_corr(False) before dec value.
-        * :param **max_revs**: No of swipes before end of alg.
-        * :param **start_val**: Initial value.
-        * :param **step_up**: Values of inc with n_up.
-        * :param **step_down**: Values of dec with n_down.
+        * **n_up** correct answers in a row -> curr_val is **decreased** by
+          **step_up** (the participant moves "up" the staircase, toward harder).
+        * **n_down** incorrect answers in a row -> curr_val is **increased** by
+          **step_down** (the participant moves "down" the staircase, toward
+          easier).
+
+        Naming convention is psychophysical: "up"/"down" refer to staircase
+        difficulty, not to the direction of curr_val. A 2-down-1-up rule is
+        therefore expressed as ``n_up=2, n_down=1`` here.
+
+        Iteration terminates after **max_revs** reversals (direction switches
+        between an n_up step and an n_down step).
+
+        :param n_up: Correct answers in a row required to decrease curr_val.
+        :param n_down: Incorrect answers in a row required to increase curr_val.
+        :param max_revs: Number of reversals at which the staircase terminates.
+        :param start_val: Initial value of curr_val.
+        :param step_up: Amount curr_val is decreased by after n_up correct.
+        :param step_down: Amount curr_val is increased by after n_down wrong.
         """
 
         # Some vals must be positive, check if that true.
@@ -30,7 +39,6 @@ class NUpNDown(AbstractAdaptive):
         self.step_up = step_up
         self.step_down = step_down
 
-        self.jumps = 0
         self.no_corr_in_a_row = 0
         self.no_incorr_in_a_row = 0
         self.last_jump_dir = 0
@@ -80,11 +88,11 @@ class NUpNDown(AbstractAdaptive):
         # check if it's time to change returned value
         if self.n_up == self.no_corr_in_a_row:
             self.curr_val -= self.step_up
-            jump = 1  # mean increase
+            jump = 1   # moved UP the staircase (harder); curr_val decreased
 
         if self.n_down == self.no_incorr_in_a_row:
             self.curr_val += self.step_down
-            jump = -1  # mean decrease
+            jump = -1  # moved DOWN the staircase (easier); curr_val increased
 
         if jump:  # check if jump was also a switch
             if not self.last_jump_dir:
