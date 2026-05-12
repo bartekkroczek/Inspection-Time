@@ -17,6 +17,7 @@ KEYS = ['left', 'right']
 SCREEN_RES = [1920, 1080]
 FRAME_RATE = 60   # see CAUTION block in README.md — must match the monitor's refresh rate
 PART_ID = ''      # populated from the launch dialog; referenced by atexit save handler
+SESSION_TS = ''   # ISO 8601 session start; shared by log and CSV filenames
 
 # Conditions to run, in order. Comment out a line to skip that condition.
 # Default: CIRCLES only. Uncomment 'SQUARES' to also run the squares block.
@@ -37,8 +38,13 @@ class CorrectStim(object):  # Correct Stimulus Enumerator
 
 @atexit.register
 def save_beh_results() -> None:
-    now = datetime.now()
-    path = join('results', f'{PART_ID}_{now.strftime("%d-%m-%Y_%H-%M-%S")}_beh.csv')
+    # RESULTS[0] is the header row appended at import time; if nothing else has
+    # been appended (e.g. dialog dismissed before any trial), there is no
+    # behavioural data worth writing.
+    if len(RESULTS) <= 1:
+        logging.flush()
+        return
+    path = join('results', f'{PART_ID}_{SESSION_TS}_beh.csv')
     with open(path, 'w', encoding='utf-8') as beh_file:
         beh_writer = csv.writer(beh_file)
         beh_writer.writerows(RESULTS)
@@ -105,7 +111,9 @@ def _corr_to_csv(corr):
 
 
 def main():
-    global PART_ID  # PART_ID is used in case of error on @atexit, that's why it must be global
+    # PART_ID and SESSION_TS are used by the atexit save handler, so they must
+    # be module-level globals that can be read after main() returns or aborts.
+    global PART_ID, SESSION_TS
     # === Dialog popup ===
     info = {'IDENTYFIKATOR': '', u'P\u0141EC': ['M', "K"], 'WIEK': '20'}
     dictDlg = gui.DlgFromDict(dictionary=info, title='Czas detekcji wzrokowej')
@@ -114,11 +122,13 @@ def main():
     if not info['IDENTYFIKATOR'].strip():
         abort_with_error('IDENTYFIKATOR (participant ID) is required and cannot be empty.')
 
+    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
+    SESSION_TS = datetime.now().strftime('%Y-%m-%dT%H%M%S')
+
     # === Scene init ===
     win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
     event.Mouse(visible=False, newPos=None, win=win)  # Make mouse invisible
-    PART_ID = info['IDENTYFIKATOR'] + info[u'P\u0141EC'] + info['WIEK']
-    logging.LogFile(join('.', 'results', f"{PART_ID}_{str(random.choice(range(100, 1000)))}.log"),
+    logging.LogFile(join('.', 'results', f'{PART_ID}_{SESSION_TS}.log'),
                     level=logging.INFO)  # errors logging
     logging.info('FRAME RATE: {}'.format(FRAME_RATE))
     logging.info('SCREEN RES: {}'.format(SCREEN_RES))

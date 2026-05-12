@@ -197,10 +197,15 @@ Lines starting with `#` in message files are treated as comments and skipped.
 
 ## Output
 
-Two files per session are written to `results/`:
+Two files per session are written to `results/`. Both share the same ISO 8601
+session timestamp generated at the start of the run, so a behavioural CSV
+and its matching PsychoPy log always pair up by filename:
 
-- `{PART_ID}_{DD-MM-YYYY_HH-MM-SS}_beh.csv` — behavioural data
-- `{PART_ID}_{random}.log` — PsychoPy log (frame rate, screen res, errors)
+- `{PART_ID}_{YYYY-MM-DDTHHMMSS}_beh.csv` — behavioural data
+- `{PART_ID}_{YYYY-MM-DDTHHMMSS}.log` — PsychoPy log (frame rate, screen res, errors)
+
+If the run aborts before any trial is collected (e.g. the launch dialog is
+dismissed), no CSV is written.
 
 CSV columns:
 

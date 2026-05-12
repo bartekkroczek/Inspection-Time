@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class AbstractAdaptive(object):
+class AbstractAdaptive(metaclass=ABCMeta):
     """
     Abstract class that defines API for all adaptive algorithms.
     All subclasses inhering from this class will be iterable.
@@ -15,7 +15,6 @@ class AbstractAdaptive(object):
     ```
 
     """
-    __metaclass__ = ABCMeta
 
     @abstractmethod
     def __iter__(self):
