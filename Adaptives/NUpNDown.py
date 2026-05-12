@@ -2,7 +2,7 @@ from .AbstractAdaptive import AbstractAdaptive
 
 
 class NUpNDown(AbstractAdaptive):
-    def __init__(self, n_up=3, n_down=1, max_revs=8, start_val=10, step_up=1, step_down=1):
+    def __init__(self, n_up, n_down, max_revs, start_val, step_up=1, step_down=1):
         """
         Transformed up-down staircase. On each iteration the class yields
         **curr_val**, starting from **start_val**. The caller reports whether
@@ -30,8 +30,8 @@ class NUpNDown(AbstractAdaptive):
         :param step_down: Amount curr_val is increased by after n_down wrong.
         """
 
-        # Some vals must be positive, check if that true.
-        assert all(map(lambda x: x > 0, [n_up, n_down, max_revs, step_up])), 'Illegal init value'
+        # Required positive parameters.
+        assert all(x > 0 for x in [n_up, n_down, max_revs, step_up]), 'Illegal init value.'
         self.n_up = n_up
         self.n_down = n_down
         self.max_revs = max_revs
@@ -44,40 +44,32 @@ class NUpNDown(AbstractAdaptive):
         self.last_jump_dir = 0
         self.revs_count = 0
         self.set_corr_flag = True
-        self.switch_in_last_trail_flag = False
+        self.switch_in_last_trial_flag = False
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        # Set_corr wasn't used after last iteration. That's quite bad.
+        # set_corr() must be called between iterations.
         if not self.set_corr_flag:
-            raise Exception(" class.set_corr() must be used at least once "
-                            "in any iteration!")
+            raise Exception('NUpNDown.set_corr() must be called at least once per iteration.')
         self.set_corr_flag = False
 
-        # check if it's time to stop alg.
+        # Stop after the configured number of reversals.
         if self.revs_count < self.max_revs:
             return self.curr_val
         else:
             raise StopIteration()
 
     def set_corr(self, corr):
-        """
-        This func determine changes in value returned by next.
+        """Report the correctness of the last iteration; may shift curr_val."""
+        assert isinstance(corr, bool), 'Correctness must be a boolean value.'
 
-        :param **corr**: Correctness in last iteration.
-
-        :return: None
-        """
-        # check if corr val make sense
-        assert isinstance(corr, bool), 'Correctness must be a boolean value'
-
-        self.set_corr_flag = True  # set_corr are used, set flag.
-        self.switch_in_last_trail_flag = False
+        self.set_corr_flag = True
+        self.switch_in_last_trial_flag = False
         jump = 0
 
-        # increase no of corr or incorr ans in row.
+        # Update the corresponding run-length counter; reset the other one.
         if corr:
             self.no_corr_in_a_row += 1
             self.no_incorr_in_a_row = 0
@@ -85,27 +77,28 @@ class NUpNDown(AbstractAdaptive):
             self.no_corr_in_a_row = 0
             self.no_incorr_in_a_row += 1
 
-        # check if it's time to change returned value
+        # Did we hit a step threshold?
         if self.n_up == self.no_corr_in_a_row:
             self.curr_val -= self.step_up
-            jump = 1   # moved UP the staircase (harder); curr_val decreased
+            jump = 1   # Moved UP the staircase (harder); curr_val decreased.
 
         if self.n_down == self.no_incorr_in_a_row:
             self.curr_val += self.step_down
-            jump = -1  # moved DOWN the staircase (easier); curr_val increased
+            jump = -1  # Moved DOWN the staircase (easier); curr_val increased.
 
-        if jump:  # check if jump was also a switch
+        # Was this jump a reversal?
+        if jump:
             if not self.last_jump_dir:
-                # it was first jump, remember direction.
+                # First jump: remember the direction.
                 self.last_jump_dir = jump
             elif jump != self.last_jump_dir:
-                # yes, it was switch.
+                # Direction switched: count a reversal.
                 self.revs_count += 1
                 self.last_jump_dir = jump
-                self.switch_in_last_trail_flag = True
-            # clear counters after jump
+                self.switch_in_last_trial_flag = True
+            # Reset counters after the jump.
             self.no_incorr_in_a_row = 0
             self.no_corr_in_a_row = 0
 
     def get_jump_status(self):
-        return self.last_jump_dir, self.switch_in_last_trail_flag, self.revs_count
+        return self.last_jump_dir, self.switch_in_last_trial_flag, self.revs_count

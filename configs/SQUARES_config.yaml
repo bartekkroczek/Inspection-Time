@@ -34,7 +34,6 @@ QUESTION_POS_Y:    -180       # question vertical offset (px; 0 = screen centre)
 FIX_TIME: 45                  # fixation cross duration  (~750 ms)
 MTIME:    17                  # mask presentation time   (~283 ms)
 RTIME:    240                 # max response time        (~4 s); timeout = wrong
-RESTTIME: 240                 # currently UNUSED by main.py
 
 # Inter-trial interval jitter, in frames. Each trial waits a random integer
 # drawn from [min, max] frames (inclusive on both ends), divided by

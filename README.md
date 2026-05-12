@@ -3,7 +3,9 @@
 A PsychoPy-based **Inspection Time** experiment measuring the minimum stimulus
 onset asynchrony (SOA) at which a participant can still reliably make a forced-
 choice visual judgement. Threshold is estimated with an adaptive
-**N-up-N-down** staircase. Two conditions are run back-to-back:
+**N-up-N-down** staircase. Two conditions are available — by default only
+**CIRCLES** runs; see [Running only one condition](#running-only-one-condition)
+to enable SQUARES as well:
 
 | Condition   | Task                                              |
 |-------------|---------------------------------------------------|
@@ -105,21 +107,30 @@ frame ≈ 16.67 ms).
 Shared schema (annotated):
 
 ```yaml
-# All values in no. of frames.
+# Time values are in frames; UI sizes/offsets are in pixels.
 TRAINING_TRIALS: [ ... ]      # n trials per training block
 TRAINING_SOAS:   [ ... ]      # SOA used in each training block
-# ^ these two lists MUST be the same length — asserted at runtime
+# ^ these two lists MUST be the same length — validated at runtime
 
-START_SOA: <int>              # initial SOA for the adaptive staircase
-FIX_TIME:  <int>              # fixation cross duration
-MTIME:     <int>              # mask duration
-RTIME:     <int>              # max response time
-RESTTIME:  <int>              # currently unused
-REST_TIME_RANGE: [ <int>, <int> ]  # inter-trial jitter range, in frames
+START_SOA: <int>              # initial SOA for the adaptive staircase (frames)
+FIX_TIME:  <int>              # fixation cross duration (frames)
+MTIME:     <int>              # mask duration (frames)
+RTIME:     <int>              # max response time (frames)
+REST_TIME_RANGE: [ <int>, <int> ]  # inter-trial jitter range (frames, inclusive)
 
 MAX_REVS: <int>               # reversals before the staircase terminates
 N_UP:     <int>               # correct-in-a-row before SOA decreases (harder)
 N_DOWN:   <int>               # incorrect-in-a-row before SOA increases (easier)
+
+# On-screen UI.
+MSG_TEXT_SIZE:     <int>      # instruction-screen font height (px)
+FEEDBACK_HEIGHT:   <int>      # per-trial feedback font height (px)
+FEEDBACK_DURATION: <int>      # how long feedback is shown (frames)
+FIX_HEIGHT:        <int>      # fixation '+' height (px)
+ARROW_HEIGHT:      <int>      # response-arrow row height (px)
+ARROW_POS_Y:       <int>      # response-arrow vertical offset (px from centre)
+QUESTION_HEIGHT:   <int>      # question-text height (px)
+QUESTION_POS_Y:    <int>      # question vertical offset (px from centre)
 ```
 
 The YAML files themselves are commented — open
@@ -136,7 +147,7 @@ current values and per-field documentation.
 | `FIX_TIME`        | Duration of the fixation cross before each trial.                      |
 | `MTIME`           | Duration the mask is shown after stimulus offset.                      |
 | `RTIME`           | Maximum time the participant has to respond. Timeout counts as wrong.  |
-| `REST_TIME_RANGE` | `[min, max]` frames for the jittered ITI. A random integer from this range is divided by 60 to get seconds. |
+| `REST_TIME_RANGE` | `[min, max]` frames for the jittered ITI (inclusive on both ends). A random integer from this range is divided by `FRAME_RATE` to get seconds. |
 | `MAX_REVS`        | Staircase stops after this many reversals. Total trials is **variable**. |
 | `N_UP` / `N_DOWN` | Staircase rule. `N_UP` correct in a row → harder; `N_DOWN` wrong in a row → easier. With `N_DOWN = 1` the rule converges on the SOA where the participant is correct with probability *p* satisfying *p^N_UP = 0.5* — so `2/1` ≈ 71%, `3/1` ≈ 79%. |
 | `MSG_TEXT_SIZE`   | Font height (px) for the on-screen instruction messages (`{cond}_before_training.txt` and `{cond}_feedback.txt`). |
@@ -227,8 +238,9 @@ Level, Reversal, Reversal_count, Latency, Rating
   CSV records them distinctly so analysis can separate the two cases.
 - `Latency` is `-1` whenever `Correct` is `NA` (no response was made).
 - `Reversal` is `1` on the trial where the staircase reverses direction.
-- `Rating` is currently inactive — the confidence rating scale is commented
-  out in `run_trial` (`main.py`). Re-enable that block if you need it.
+- `Rating` is currently inactive — `run_trial` returns the placeholder `'-'`
+  and the CSV column is reserved. To collect confidence ratings, add a rating
+  UI block to `run_trial` before the final `win.flip()`.
 
 ---
 
@@ -241,9 +253,10 @@ When adapting the experiment for a new study, change these in order:
    this README. Anything other than 60 Hz silently corrupts the data unless
    you also update `FRAME_RATE` in `main.py` *and* recompute every frame
    count in both YAML configs.
-2. **Screen resolution** — set `SCREEN_RES` in `main.py` (`__main__` block).
+2. **Screen resolution** — set `SCREEN_RES` near the top of `main.py` (in the
+   `# GLOBALS` section).
 3. **Stimuli** — drop new BMPs into `stims/` with the same names.
 4. **Instructions** — edit the files in `messages/`.
-5. **Timing / staircase** — tune the two YAML configs.
+5. **Timing, staircase, and UI sizes** — tune the two YAML configs.
 
 
