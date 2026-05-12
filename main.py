@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
 import atexit
 import codecs
 import csv
@@ -14,8 +13,10 @@ from Adaptives.NUpNDown import NUpNDown
 
 # GLOBALS
 TEXT_SIZE = 30
-VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
+SCREEN_RES = [1920, 1080]
+FRAME_RATE = 60   # see CAUTION block in README.md — must match the monitor's refresh rate
+PART_ID = ''      # populated from the launch dialog; referenced by atexit save handler
 
 # Conditions to run, in order. Comment out a line to skip that condition.
 # Default: CIRCLES only. Uncomment 'SQUARES' to also run the squares block.
@@ -130,7 +131,6 @@ def main():
         right_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_MASK.bmp'))
         fix_stim = visual.TextStim(win, text='+', height=100, color='grey')
-        # fix_stim = visual.ImageStim(win, image=join('.', 'stims', 'PRE_STIMULI.bmp'))
         arrow_label = visual.TextStim(win, text=u"\u2190       \u2192", color='grey', height=30,
                                       pos=(0, -200))
         if proc_version == 'SQUARES':
@@ -146,13 +146,17 @@ def main():
         # === Load data, configure log ===
 
         response_clock = core.Clock()
-        conf = yaml.load(open(join('.', 'configs', f'{proc_version}_config.yaml')), Loader=yaml.SafeLoader)
+        with open(join('.', 'configs', f'{proc_version}_config.yaml'), encoding='utf-8') as conf_file:
+            conf = yaml.safe_load(conf_file)
 
         # === Training ===
 
         show_info(win, join('.', 'messages', f'{proc_version}_before_training.txt'))
         fix_time = conf['FIX_TIME']
-        assert len(conf['TRAINING_TRIALS']) == len(conf["TRAINING_SOAS"]), "Conf error, training list incorrect"
+        if len(conf['TRAINING_TRIALS']) != len(conf['TRAINING_SOAS']):
+            abort_with_error(
+                f"{proc_version} config: TRAINING_TRIALS and TRAINING_SOAS must have the same length "
+                f"(got {len(conf['TRAINING_TRIALS'])} and {len(conf['TRAINING_SOAS'])}).")
         idx = 0
         for no_trials, soa in zip(conf['TRAINING_TRIALS'], conf['TRAINING_SOAS']):
             for idx in range(idx + 1, no_trials + idx + 1):
@@ -183,7 +187,6 @@ def main():
         experiment = NUpNDown(start_val=conf['START_SOA'], max_revs=conf['MAX_REVS'], n_up=conf['N_UP'],
                               n_down=conf['N_DOWN'])
         old_rev_count_val: int = -1
-        soas: list = list()
         show_info(win, join('.', 'messages', f'{proc_version}_feedback.txt'))
         for idx, soa in enumerate(experiment, 1):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win,
@@ -194,8 +197,6 @@ def main():
             # records the distinction as NA so analysis can separate the cases.
             experiment.set_corr(corr is True)
             level, reversal, revs_count = map(int, experiment.get_jump_status())
-            if reversal:
-                soas.append(soa)
             if old_rev_count_val != revs_count:
                 old_rev_count_val = revs_count
                 rev_count_val = revs_count
@@ -247,23 +248,11 @@ def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa,
             rt = response_clock.getTime()
             break
         check_exit()
-    # Rating Scale
+    # Rating scale is not currently collected; the CSV reserves the column.
     rating = '-'
-    # ratingScale = visual.RatingScale(win, size=0.8, noMouse=True,
-    #                                  markerStart=2, stretch=1.4,
-    #                                  scale="Okre\u015bl swoj\u0105 pewno\u015b\u0107 co do udzielonej odpowiedzi",
-    #                                  acceptPreText='Wybierz',
-    #                                  choices=["\u017badna", "Ma\u0142a", "Du\u017ca", "Ca\u0142kowita"])
-    # while ratingScale.noResponse:
-    #     ratingScale.draw()
-    #     win.flip()
-    # rating = ratingScale.getRating()
     win.flip()
     return corr, rt, rating
 
 
 if __name__ == '__main__':
-    PART_ID = ''
-    SCREEN_RES = [1920, 1080]
-    FRAME_RATE = 60
     main()

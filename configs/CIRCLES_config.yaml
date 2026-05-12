@@ -30,7 +30,8 @@ RTIME:    240                 # max response time        (~4 s); timeout = wrong
 RESTTIME: 240                 # currently UNUSED by main.py
 
 # Inter-trial interval jitter, in frames. Each trial waits a random integer
-# from [min, max) frames, divided by 60, i.e. roughly 750–983 ms.
+# drawn from [min, max] frames (inclusive on both ends), divided by
+# FRAME_RATE (see main.py). At 60 Hz this is ~750-1000 ms.
 REST_TIME_RANGE: [ 45, 60 ]
 
 # --- Staircase rule ----------------------------------------------------------
