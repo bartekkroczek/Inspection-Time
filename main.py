@@ -17,6 +17,13 @@ TEXT_SIZE = 30
 VISUAL_OFFSET = 90
 KEYS = ['left', 'right']
 
+# Conditions to run, in order. Comment out a line to skip that condition.
+# Default: CIRCLES only. Uncomment 'SQUARES' to also run the squares block.
+CONDITIONS = [
+    # 'SQUARES',
+    'CIRCLES',
+]
+
 RESULTS = list()
 RESULTS.append(['PART_ID', 'Trial', 'Stimuli', 'Training', 'FIXTIME', 'MTIME', 'Correct', 'SOA',
                 'Level', 'Reversal', 'Reversal_count', 'Latency', 'Rating'])
@@ -87,6 +94,15 @@ def abort_with_error(err):
     raise Exception(err)
 
 
+def _corr_to_csv(corr):
+    """Map tri-state correctness (True / False / None) to CSV value (1 / 0 / NA)."""
+    if corr is True:
+        return 1
+    if corr is False:
+        return 0
+    return 'NA'
+
+
 def main():
     global PART_ID  # PART_ID is used in case of error on @atexit, that's why it must be global
     # === Dialog popup ===
@@ -94,6 +110,8 @@ def main():
     dictDlg = gui.DlgFromDict(dictionary=info, title='Czas detekcji wzrokowej')
     if not dictDlg.OK:
         abort_with_error('Info dialog terminated.')
+    if not info['IDENTYFIKATOR'].strip():
+        abort_with_error('IDENTYFIKATOR (participant ID) is required and cannot be empty.')
 
     # === Scene init ===
     win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix', screen=0, color='black')
@@ -107,7 +125,7 @@ def main():
     neg_feedb = visual.TextStim(win, text=u'Niepoprawna odpowied\u017A', color='grey', height=40)
     no_feedb = visual.TextStim(win, text=u'Nie udzieli\u0142e\u015B odpowiedzi', color='grey', height=40)
 
-    for proc_version in ['SQUARES', 'CIRCLES']:
+    for proc_version in CONDITIONS:
         left_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_LEFT.bmp'))
         right_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_RIGHT.bmp'))
         mask_stim = visual.ImageStim(win, image=join('.', 'stims', f'{proc_version}_MASK.bmp'))
@@ -141,22 +159,23 @@ def main():
                 corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win,
                                              arrow_label, question_text, response_clock)
                 RESULTS.append(
-                    [PART_ID, idx, proc_version, 'training', fix_time, conf['MTIME'], corr, soa, '-', '-',
-                     '-', rt, rating])
+                    [PART_ID, idx, proc_version, 'training', fix_time, conf['MTIME'], _corr_to_csv(corr), soa,
+                     '-', '-', '-', rt, rating])
                 # FEEDBACK
-                if corr == 1:
+                if corr is True:
                     feedb_msg = pos_feedb
-                elif corr == 0:
+                elif corr is False:
                     feedb_msg = neg_feedb
-                else:
+                else:  # corr is None -> participant did not respond in time
                     feedb_msg = no_feedb
                 for _ in range(30):
                     feedb_msg.draw()
                     check_exit()
                     win.flip()
                 win.flip()
-                # break + jitter
-                wait_time_in_secs: float = random.choice(range(*conf['REST_TIME_RANGE'])) / 60.0
+                # break + jitter (REST_TIME_RANGE is inclusive of both bounds)
+                low, high = conf['REST_TIME_RANGE']
+                wait_time_in_secs: float = random.choice(range(low, high + 1)) / FRAME_RATE
                 core.wait(wait_time_in_secs)
 
         # === Experiment ===
@@ -169,7 +188,11 @@ def main():
         for idx, soa in enumerate(experiment, 1):
             corr, rt, rating = run_trial(conf, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa, win,
                                          arrow_label, question_text, response_clock)
-            experiment.set_corr(corr)
+            # Timeouts (corr is None) are fed to the staircase as wrong answers.
+            # This is conservative: an inattentive participant moves the SOA up
+            # (easier) rather than stalling convergence. The CSV column 'Correct'
+            # records the distinction as NA so analysis can separate the cases.
+            experiment.set_corr(corr is True)
             level, reversal, revs_count = map(int, experiment.get_jump_status())
             if reversal:
                 soas.append(soa)
@@ -179,10 +202,11 @@ def main():
             else:
                 rev_count_val = '-'
             RESULTS.append(
-                [PART_ID, idx, proc_version, "exp", fix_time, conf['MTIME'], corr, soa, level, reversal, rev_count_val,
-                 rt, rating])
-            # break + jitter
-            wait_time_in_secs: float = random.choice(range(*conf['REST_TIME_RANGE'])) / 60.0
+                [PART_ID, idx, proc_version, "exp", fix_time, conf['MTIME'], _corr_to_csv(corr), soa, level, reversal,
+                 rev_count_val, rt, rating])
+            # break + jitter (REST_TIME_RANGE is inclusive of both bounds)
+            low, high = conf['REST_TIME_RANGE']
+            wait_time_in_secs: float = random.choice(range(low, high + 1)) / FRAME_RATE
             core.wait(wait_time_in_secs)
 
     # === Cleaning time ===
@@ -210,7 +234,7 @@ def run_trial(config, fix_stim, left_stim, mask_stim, fix_time, right_stim, soa,
         mask_stim.draw()
         win.flip()
         check_exit()
-    corr: bool = False  # Used if timeout
+    corr = None  # Remains None if the participant does not respond within RTIME
     win.callOnFlip(response_clock.reset)
     event.clearEvents()
     for _ in range(config['RTIME']):  # Time for reaction

@@ -1,13 +1,48 @@
-# All values in no. of frames.
-TRAINING_TRIALS: [ 10, 10 ]
-TRAINING_SOAS: [ 20, 10 ]
-# both above list must be equal in length
-START_SOA: 10
-FIX_TIME: 45 # Fixation cross time
-MTIME: 17 # Mask presentation time
-RTIME: 240 # Maximal response time
-RESTTIME: 240
+# =============================================================================
+# CIRCLES condition — adaptive staircase config
+# =============================================================================
+# Task: decide which side shows the LARGER circle.
+#
+# Size discrimination is perceptually harder than the SQUARES rotation task,
+# so this config uses longer SOAs and a stricter staircase rule (3-down-1-up).
+#
+# ALL TIME VALUES ARE IN VIDEO FRAMES.
+# Assumes a 60 Hz display -> 1 frame ~ 16.67 ms.
+# Running on any other refresh rate silently corrupts all timings.
+# See the CAUTION block at the top of README.md.
+# =============================================================================
+
+# --- Training phase ----------------------------------------------------------
+# Two lists of equal length describing the training blocks run before the
+# adaptive staircase. Block i runs TRAINING_TRIALS[i] trials at a fixed
+# SOA of TRAINING_SOAS[i] frames. Feedback is shown after every trial.
+# Length equality is asserted at runtime (main.py).
+TRAINING_TRIALS: [ 10, 10 ]   # 10 easy trials, then 10 harder trials
+TRAINING_SOAS:   [ 20, 10 ]   # SOA per block: ~333 ms, then ~167 ms
+
+# --- Adaptive (experimental) phase -------------------------------------------
+START_SOA: 10                 # initial SOA for the staircase (~167 ms)
+
+# --- Per-trial timing --------------------------------------------------------
+FIX_TIME: 45                  # fixation cross duration  (~750 ms)
+MTIME:    17                  # mask presentation time   (~283 ms)
+RTIME:    240                 # max response time        (~4 s); timeout = wrong
+RESTTIME: 240                 # currently UNUSED by main.py
+
+# Inter-trial interval jitter, in frames. Each trial waits a random integer
+# from [min, max) frames, divided by 60, i.e. roughly 750–983 ms.
 REST_TIME_RANGE: [ 45, 60 ]
-MAX_REVS: 10 # No of reversals in adaptive alg.
-N_UP: 2
-N_DOWN: 1
+
+# --- Staircase rule ----------------------------------------------------------
+# Implemented in Adaptives/NUpNDown.py.
+#   - N_UP correct in a row  -> SOA decreases by 1 frame (harder)
+#   - N_DOWN wrong in a row  -> SOA increases by 1 frame (easier)
+# With N_DOWN = 1 the rule converges on the SOA where the participant is
+# correct with probability p satisfying p^N_UP = 0.5:
+#   2/1 -> ~71% correct (standard 2-down-1-up)
+#   3/1 -> ~79% correct  <-- used here, stricter than SQUARES
+# Because 3 correct responses must accumulate before any descent, this block
+# will on average run more trials per reversal than SQUARES.
+MAX_REVS: 10
+N_UP:     3
+N_DOWN:   1
